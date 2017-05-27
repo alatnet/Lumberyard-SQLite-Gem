@@ -1,0 +1,11 @@
+{
+    "GemFormatVersion": 3,
+    "Uuid": "4b76424b22de476497488bc53b6c88b5",
+    "Name": "SQLite",
+    "DisplayName": "SQLite",
+    "Version": "0.1.0",
+    "LinkType": "Dynamic",
+    "Summary": "SQLite Gem for Amazon Lumberyard",
+    "Tags": ["Database", "SQL", "SQLite"],
+    "IconPath": "preview.png"
+}

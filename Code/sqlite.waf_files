@@ -1,0 +1,39 @@
+{
+  "none": {
+    "Source": [
+      "Source/StdAfx.cpp",
+      "Source/StdAfx.h"
+    ]
+  },
+  "auto": {
+    "Include": [
+      "Include/SQLite/SQLiteBus.h",
+      "Include/SQLite/sqlite3.h"
+    ],
+    "Source": [
+      "Source/SQLiteModule.cpp",
+      "Source/SQLiteSystemComponent.cpp",
+      "Source/SQLiteSystemComponent.h",
+      "Source/SQLiteComponent.cpp",
+      "Source/SQLiteComponent.h",
+      "Source/sqlite3.c",
+      "Source/InternalFunctions.cpp",
+      "Source/InternalFunctions.h"
+    ],
+    "Source/Classes": [
+      "Source/SQLiteClasses.h",
+      "Source/SQLiteValue.cpp",
+      "Source/SQLiteValue.h",
+      "Source/SQLiteMutex.cpp",
+      "Source/SQLiteMutex.h",
+      "Source/SQLiteStmt.cpp",
+      "Source/SQLiteStmt.h",
+      "Source/SQLiteDB.cpp",
+      "Source/SQLiteDB.h",
+      "Source/SQLiteBackup.cpp",
+      "Source/SQLiteBackup.h",
+      "Source/SQLiteVFS.cpp",
+      "Source/SQLiteVFS.h"
+    ]
+  }
+}
