@@ -11,6 +11,7 @@ sqlite3.h needs to be placed in Code/Include/SQLite.
 Any function that has a parameter that is for a function, i.e. "void foo(void(\*)(void\*))".  
 Any function that uses argument variation, i.e. "void foo(...)".  
 Any function that returns or has parameters of void \*. (UTF-16 base functions use these.)  
+Any function that has multidimentional array returns or parameters, i.e. "void foo(int **mdarray)"  
 String functions.  
 [Malloc Functions.](https://sqlite.org/c3ref/free.html) (For obvious reasons)
 

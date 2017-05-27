@@ -12,7 +12,7 @@ namespace SQLite3 {
 		// Statement Class
 		#define SQLITESTMT_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteStmt::##name##,##defaultval##,##dbgDesc##)
 		#define SQLITESTMT_METHOD_ALT(name, func, defaultval, dbgDesc) ->Method(##name##,&SQLiteStmt::##func##,##defaultval##,##dbgDesc##)
-		bc->Class<SQLiteStmt>("SQLite3Stmt")
+		bc->Class<SQLiteStmt>("SQLiteStmt")
 			SQLITESTMT_METHOD(Step, nullptr, "")
 			SQLITESTMT_METHOD(Finalize, nullptr, "")
 			SQLITESTMT_METHOD(Reset, nullptr, "")
