@@ -3,11 +3,10 @@
 #include <AzCore\RTTI\TypeInfo.h>
 #include <AzCore/RTTI/BehaviorContext.h>
 
-#include "SQLiteStmt.h"
 #include "SQLiteMutex.h"
 
 namespace SQLite3 {
-	//class SQLiteStmt;
+	class SQLiteStmt;
 
 	////////////////////////////////////////////////////////////////////////
 	//SQLiteDB Class

@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "InternalFunctions.h"
 
+#include "SQLiteDB.h"
+
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
 	//Method Overrides

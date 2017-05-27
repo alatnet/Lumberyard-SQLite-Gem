@@ -2,6 +2,8 @@
 #include "SQLiteDB.h"
 #include "InternalFunctions.h"
 
+#include "SQLiteStmt.h"
+
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
 	//SQLite DB

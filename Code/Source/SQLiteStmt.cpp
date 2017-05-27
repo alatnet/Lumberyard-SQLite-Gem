@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "SQLiteStmt.h"
 
+#include "SQLiteDB.h"
+
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
 	/*int SQLiteStmt::ScanStatus(int idx, int iScanStatusOp) {
@@ -39,10 +41,12 @@ namespace SQLite3 {
 			//SQLITESTMT_METHOD(Column_Database_Origin_Name16, nullptr, "")
 			#endif
 			SQLITESTMT_METHOD(Data_Count, nullptr, "")
-			//SQLITESTMT_METHOD(DB_Handle, nullptr, "") //causes build errors
+			SQLITESTMT_METHOD(DB_Handle, nullptr, "") //causes build errors
+			//	SQLITE_METHOD_OVERRIDE(DB_HandleScript)
 			SQLITESTMT_METHOD(SQL, nullptr, "")
 			SQLITESTMT_METHOD(Expanded_SQL, nullptr, "")
-			//SQLITESTMT_METHOD(Next_Stmt, nullptr, "") //causes build errors
+			SQLITESTMT_METHOD(Next_Stmt, nullptr, "") //causes build errors
+			//	SQLITE_METHOD_OVERRIDE(Next_StmtScript)
 			SQLITESTMT_METHOD(Busy, nullptr, "")
 			SQLITESTMT_METHOD(ReadOnly, nullptr, "")
 			;

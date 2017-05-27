@@ -1,12 +1,15 @@
 #pragma once
 
-#include "SQLiteDB.h"
+//#include "SQLiteStmt.h"
 #include "SQLiteComponent.h"
+//#include "SQLiteDB.h"
 
 namespace SQLite3 {
 	#define SQLITE_METHOD_OVERRIDE(name) ->Attribute(AZ::Script::Attributes::MethodOverride, &Internal::##name##)
 
 	class SQLiteComponent;
+	//class SQLiteStmt;
+	class SQLiteDB;
 
 	////////////////////////////////////////////////////////////////////////
 	//Method Overrides

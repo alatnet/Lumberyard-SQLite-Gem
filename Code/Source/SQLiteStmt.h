@@ -3,8 +3,8 @@
 #include <AzCore\RTTI\TypeInfo.h>
 #include <AzCore/RTTI/BehaviorContext.h>
 
-//#include "SQLiteDB.h"
 #include "SQLiteValue.h"
+#include "InternalFunctions.h"
 
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ namespace SQLite3 {
 		const char * Column_Text(int iCol) { return (const char *)sqlite3_column_text(this->m_pStmt, iCol); }
 		const void * Column_Text16(int iCol) { return sqlite3_column_text16(this->m_pStmt, iCol); } //convert to wstring?
 		int Column_Type(int iCol) { return sqlite3_column_type(this->m_pStmt, iCol); }
-		SQLiteValue * Column_Value(int iCol) { return new SQLiteValue(sqlite3_column_value(this->m_pStmt, iCol)); } //create class
+		SQLiteValue * Column_Value(int iCol) { return new SQLiteValue(sqlite3_column_value(this->m_pStmt, iCol)); }
 		const char *Column_Name(int N) { return sqlite3_column_name(this->m_pStmt, N); }
 		const void *Column_Name16(int N) { return sqlite3_column_name16(this->m_pStmt, N); } //convert to wstring?
 		int Column_Count() { return sqlite3_column_count(this->m_pStmt); }
@@ -44,13 +44,15 @@ namespace SQLite3 {
 	#endif
 	public:
 		int Data_Count() { return sqlite3_data_count(this->m_pStmt); }
-		//SQLiteDB *DB_Handle() { return new SQLiteDB(sqlite3_db_handle(this->m_pStmt)); } //causes build errors
+		SQLiteDB *DB_Handle() { return new SQLiteDB(sqlite3_db_handle(this->m_pStmt)); }
+		//sqlite3* DB_Handle() { return sqlite3_db_handle(this->m_pStmt); } //override
 	public:
 		const char *SQL() { return sqlite3_sql(this->m_pStmt); }
 		char *Expanded_SQL() { return sqlite3_expanded_sql(this->m_pStmt); }
 	public:
-		//SQLiteStmt * Next_Stmt(SQLiteDB * db) { return new SQLiteStmt(sqlite3_next_stmt(db->m_pDB, this->m_pStmt)); } //causes build errors
+		SQLiteStmt * Next_Stmt(SQLiteDB * db) { return new SQLiteStmt(sqlite3_next_stmt(db->m_pDB, this->m_pStmt)); }
 		//sqlite3_stmt *sqlite3_next_stmt(sqlite3 *pDb, sqlite3_stmt *pStmt);
+		//sqlite3_stmt * Next_Stmt(sqlite3 * db) { return sqlite3_next_stmt(db, this->m_pStmt); } //override
 	public:
 		int Busy() { return sqlite3_stmt_busy(this->m_pStmt); }
 		int ReadOnly() { return sqlite3_stmt_readonly(this->m_pStmt); }
