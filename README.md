@@ -7,6 +7,10 @@ Download the amalgamation version to be able to compile the gem.
 sqlite3.c needs to be placed in Code/Source.  
 sqlite3.h needs to be placed in Code/Include/SQLite.
 
+##Build Requirements
+Due to the nature of how Lumberyard builds its files, it will force enable C2220 - Warning treated as error (/WX).  
+To overcome this, it is required that you add "__pragma(warning(disable : 4267));" and "__pragma(warning(default : 4267));" for the section of code that triggers this error.  
+
 ## What is not currently implemented in Lua
 Any function that has a parameter that is for a function, i.e. "void foo(void(\*)(void\*))".  
 Any function that uses argument variation, i.e. "void foo(...)".  

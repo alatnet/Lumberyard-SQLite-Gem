@@ -11,7 +11,7 @@ namespace SQLite3 {
 				->SerializerForEmptyClass();
 
 			if (AZ::EditContext* ec = serialize->GetEditContext()) {
-				ec->Class<SQLiteComponent>("SQLite3", "SQLite database component.")
+				ec->Class<SQLiteComponent>("SQLite3", "SQLite Lua database component.")
 					->ClassElement(AZ::Edit::ClassElements::EditorData, "")
 					->Attribute(AZ::Edit::Attributes::Category, "Database")
 					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("System"))
