@@ -27,7 +27,7 @@ Constants and Enums are provided with variation.  SQLITE_*name* becomes SQLite.*
 The lua for lumberyard is the same as the regular lua syntax.  
 Entities that use the SQLiteSystemComponent, such as the system entity, will have a function to retrieve the current database connection that is associated with it.  
 To retrieve the database in the entity you use SQLiteLY.Event.GetConnection().  
-Afterwards, any and all lua database functions will work with the sqlite database object.
+Afterwards, any and all lua database functions will work with the sqlite database object.  
 NOTE! DO NOT call Close on a database connection that is associated with an entity.  
 The entity will automatically close it\'s database connection apon destruction.
 
