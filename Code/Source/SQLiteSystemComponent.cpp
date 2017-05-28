@@ -30,6 +30,7 @@ namespace SQLite {
 				->Handler<LuaHandler>()
 				SQLITE_EVENTLUA(Exec)
 				SQLITE_EVENTLUA(ExecTo)
+				SQLITE_EVENTLUA(GetConnection)
 				SQLITE_EVENT(Open)
 				SQLITE_EVENT(Open16)
 				SQLITE_EVENT(Open_v2)
@@ -37,39 +38,11 @@ namespace SQLite {
 				SQLITE_EVENT(ExtErrCode)
 				SQLITE_EVENT(ErrMsg)
 				SQLITE_EVENT(ErrMsg16)
-
-				/*
-				SQLITE_EVENTLUA(Step)
-				SQLITE_EVENTLUA(Finalize)
-				SQLITE_EVENTLUA(Reset)
-				*/
-				/*
-				SQLITE_EVENTLUA(PrepareErrStr)
-				SQLITE_EVENTLUA(PrepareErrInt)
-				SQLITE_EVENTLUA(Prepare)
-				SQLITE_EVENTLUA(Prepare_v2)
-				SQLITE_EVENTLUA(Prepare16)
-				SQLITE_EVENTLUA(Prepare16_v2)
-				SQLITE_EVENTLUA(GetPrepareTail)
-				SQLITE_EVENTLUA(GetPrepare16Tail)
-				*/
-				/*->Event("Step", &SQLiteRequestBus::Events::StepLua)
-				->Event("Finalize", &SQLiteRequestBus::Events::FinalizeLua)
-				->Event("Reset", &SQLiteRequestBus::Events::ResetLua)*/
-
-				//->Event("ErrStr", &SQLiteRequestBus::Events::ErrStr)
-				/*->Event("PrepareErrStr", &SQLiteRequestBus::Events::PrepareErrStrLua)
-				->Event("PrepareErrInt", &SQLiteRequestBus::Events::PrepareErrIntLua)
-				->Event("Prepare", &SQLiteRequestBus::Events::PrepareLua)
-				->Event("Prepare_v2", &SQLiteRequestBus::Events::Prepare_v2Lua)
-				->Event("Prepare16", &SQLiteRequestBus::Events::Prepare16Lua)
-				->Event("Prepare16_v2", &SQLiteRequestBus::Events::Prepare16_v2Lua)
-				->Event("GetPrepareTail", &SQLiteRequestBus::Events::GetPrepareTailLua)
-				->Event("GetPrepare16Tail", &SQLiteRequestBus::Events::GetPrepare16TailLua)*/
-				//->Event("", &SQLiteRequestBus::Events::)
 				;
 		#undef SQLITE_EVENTLUA
 		#undef SQLITE_EVENT
+
+			//behaviorContext->EBus<SQLiteLuaRequests>("");
 		}
 	}
 
@@ -241,27 +214,6 @@ namespace SQLite {
 			&args,
 			nullptr
 		);
-	}
-
-	SQLiteRequests::PrepareReturn SQLiteSystemComponent::PrepareLua(const char* sql, int nByte) {
-		PrepareReturn ret;
-		ret.ret = sqlite3_prepare(this->m_pDB, sql, nByte, &ret.ppStmt, &ret.pzTail.c);
-		return ret;
-	}
-	SQLiteRequests::PrepareReturn SQLiteSystemComponent::Prepare_v2Lua(const char* sql, int nByte) {
-		PrepareReturn ret;
-		ret.ret = sqlite3_prepare_v2(this->m_pDB, sql, nByte, &ret.ppStmt, &ret.pzTail.c);
-		return ret;
-	}
-	SQLiteRequests::PrepareReturn SQLiteSystemComponent::Prepare16Lua(const char* sql, int nByte) {
-		PrepareReturn ret;
-		ret.ret = sqlite3_prepare16(this->m_pDB, sql, nByte, &ret.ppStmt, &ret.pzTail.v);
-		return ret;
-	}
-	SQLiteRequests::PrepareReturn SQLiteSystemComponent::Prepare16_v2Lua(const char* sql, int nByte) {
-		PrepareReturn ret;
-		ret.ret = sqlite3_prepare16_v2(this->m_pDB, sql, nByte, &ret.ppStmt, &ret.pzTail.v);
-		return ret;
 	}
 
 	int SQLiteSystemComponent::LuaHandler::SqlCallback(void * cbargs, int argc, AZStd::vector<AZStd::string> argv, AZStd::vector<AZStd::string> azColName){

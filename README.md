@@ -23,6 +23,14 @@ Do note that some functions may have shorter names than the C++ version.
 Any C++ function that has Out parameters are multi returned in Lua starting with the C++ return then Out parameters.  
 Constants and Enums are provided with variation.  SQLITE_*name* becomes SQLite.*name*.
 
+## Lumberyard Specific Lua
+The lua for lumberyard is the same as the regular lua syntax.  
+Entities that use the SQLiteSystemComponent, such as the system entity, will have a function to retrieve the current database connection that is associated with it.  
+To retrieve the database in the entity you use SQLiteLY.Event.GetConnection().  
+Afterwards, any and all lua database functions will work with the sqlite database object.
+NOTE! DO NOT call Close on a database connection that is associated with an entity.  
+The entity will automatically close it\'s database connection apon destruction.
+
 ## Lua Classes
 SQLite - sqlite3 \*  
 SQLiteStmt - sqlite3_stmt \*  
@@ -41,29 +49,29 @@ Example = {
 function Example:OnActivate()
 	Debug.Log("Hello, world!")
 
-	Debug.Log("LibVersion: "..SQLite.LibVersion())
+	Debug.Log("SQLite LibVersion: "..SQLite.LibVersion())
 	
+	--test individual database connection
+	Debug.Log("Individual DB Connection")
 	sqlitedb = SQLite()
 	sqlitedb:Open(":memory:")
 
-	err, stmt, tail = sqlitedb:Prepare_v2("CREATE TABLE Test (Col1 int, Col2 varchar(255));")
+	Debug.Log("Type: " .. type(sqlitedb))
+
+	err, stmt, tail = sqlitedb:Prepare_v2("CREATE TABLE Individual (Col1 int, Col2 varchar(255));")
 	stmt:Step()
 	stmt:Finalize()
-	
-	err, stmt, tail = sqlitedb:Prepare_v2("INSERT INTO Test (Col1, Col2) VALUES(0,'FIRST');")
+	err, stmt, tail = sqlitedb:Prepare_v2("INSERT INTO Individual (Col1, Col2) VALUES(0,'FIRST');")
+	stmt:Step()
+	stmt:Finalize()
+	err, stmt, tail = sqlitedb:Prepare_v2("INSERT INTO Individual (Col1, Col2) VALUES(1,'SECOND');")
+	stmt:Step()
+	stmt:Finalize()
+	err, stmt, tail = sqlitedb:Prepare_v2("INSERT INTO Individual (Col1, Col2) VALUES(2,'THIRD');")
 	stmt:Step()
 	stmt:Finalize()
 
-	err, stmt, tail = sqlitedb:Prepare_v2("INSERT INTO Test (Col1, Col2) VALUES(1,'SECOND');")
-	stmt:Step()
-	stmt:Finalize()
-
-	err, stmt, tail = sqlitedb:Prepare_v2("INSERT INTO Test (Col1, Col2) VALUES(2,'THIRD');")
-	stmt:Step()
-	stmt:Finalize()
-
-	err, stmt, tail = sqlitedb:Prepare_v2("SELECT * FROM Test;")
-
+	err, stmt, tail = sqlitedb:Prepare_v2("SELECT * FROM Individual;")
 	while stmt:Step() == SQLite.ROW do
 		first = stmt:Column_Int(0)
 		second = stmt:Column_Text(1)
@@ -73,10 +81,41 @@ function Example:OnActivate()
 
 		Debug.Log(firstCol ..": " .. first .. " = " .. secondCol ..": " .. second)
 	end
-
 	stmt:Finalize()
-
 	sqlitedb:Close()
+
+	--test entity database connection
+	Debug.Log("Entity DB Connection")
+	sqliteEntdb = SQLiteLY.Event.GetConnection(self.entityId)
+
+	Debug.Log("Type: " .. type(sqliteEntdb))
+
+	if sqliteEntdb ~= nil then
+		err, stmt, tail = sqliteEntdb:Prepare_v2("CREATE TABLE Entity (Col3 int, Col4 varchar(255));")
+		stmt:Step()
+		stmt:Finalize()
+		err, stmt, tail = sqliteEntdb:Prepare_v2("INSERT INTO Entity (Col3, Col4) VALUES(0,'FIRST');")
+		stmt:Step()
+		stmt:Finalize()
+		err, stmt, tail = sqliteEntdb:Prepare_v2("INSERT INTO Entity (Col3, Col4) VALUES(1,'SECOND');")
+		stmt:Step()
+		stmt:Finalize()
+		err, stmt, tail = sqliteEntdb:Prepare_v2("INSERT INTO Entity (Col3, Col4) VALUES(2,'THIRD');")
+		stmt:Step()
+		stmt:Finalize()
+
+		err, stmt, tail = sqliteEntdb:Prepare_v2("SELECT * FROM Entity;")
+		while stmt:Step() == SQLite.ROW do
+			first = stmt:Column_Int(0)
+			second = stmt:Column_Text(1)
+
+			firstCol = stmt:Column_Name(0)
+			secondCol = stmt:Column_Name(1)
+
+			Debug.Log(firstCol ..": " .. first .. " = " .. secondCol ..": " .. second)
+		end
+		stmt:Finalize()
+	end
 end
 
 function Example:OnDeactivate()

@@ -12,8 +12,22 @@
 
 #include <AzCore\RTTI\TypeInfo.h>
 
+#include "SQLiteDB.h"
+
 namespace SQLite
 {
+	class SQLiteLuaRequests : public AZ::EBusTraits {
+	public:
+		static const AZ::EBusHandlerPolicy HandlerPolicy = AZ::EBusHandlerPolicy::Single;
+		static const AZ::EBusAddressPolicy AddressPolicy = AZ::EBusAddressPolicy::ById;
+
+		using BusIdType = AZ::EntityId;
+	public:
+		//virtual int SqlCallback(void * cbargs, int argc, char **argv, char **azColName) = 0;
+		virtual int SqlCallback(void * cbargs, int argc, AZStd::vector<AZStd::string> argv, AZStd::vector<AZStd::string> azColName) = 0;
+	};
+	using SQLiteLuaBus = AZ::EBus<SQLiteLuaRequests>;
+	
     class SQLiteSystemComponent
         : public AZ::Component
         , protected SQLiteRequestBus::Handler
@@ -37,22 +51,12 @@ namespace SQLite
 
 		int Exec(const char *sql, int(*callback)(void*, int, char**, char**), void * cbarg, char **errmsg) { return sqlite3_exec(this->m_pDB, sql, callback, cbarg, errmsg); }
 
-		int Prepare(const char * sql, int nByte, sqlite3_stmt **ppStmt, const char **pzTail) { return sqlite3_prepare(this->m_pDB, sql, nByte, ppStmt, pzTail); }
-		int Prepare_v2(const char * sql, int nByte, sqlite3_stmt **ppStmt, const char **pzTail) { return sqlite3_prepare_v2(this->m_pDB, sql, nByte, ppStmt, pzTail); }
-		int Prepare16(const char * sql, int nByte, sqlite3_stmt **ppStmt, const void **pzTail) { return sqlite3_prepare16(this->m_pDB, sql, nByte, ppStmt, pzTail); }
-		int Prepare16_v2(const char * sql, int nByte, sqlite3_stmt **ppStmt, const void **pzTail) { return sqlite3_prepare16_v2(this->m_pDB, sql, nByte, ppStmt, pzTail); }
-
 		sqlite3 * GetConnection() { return this->m_pDB; }
-
-		int Step(sqlite3_stmt* pStmt) { return sqlite3_step(pStmt); }
-		int Finalize(sqlite3_stmt *pStmt) { return sqlite3_finalize(pStmt); }
-		int Reset(sqlite3_stmt *pStmt) { return sqlite3_reset(pStmt); }
 
 		int ErrCode() { return sqlite3_errcode(this->m_pDB); }
 		int ExtErrCode() { return sqlite3_extended_errcode(this->m_pDB); }
 		const char * ErrMsg() { return sqlite3_errmsg(this->m_pDB); }
 		const void * ErrMsg16() { return sqlite3_errmsg16(this->m_pDB); }
-		const char * ErrStr(int err) { return sqlite3_errstr(err); }
         ////////////////////////////////////////////////////////////////////////
 	protected:
 		////////////////////////////////////////////////////////////////////////
@@ -60,20 +64,7 @@ namespace SQLite
 		int ExecLua(const char *sql, void * cbarg);
 		int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg);
 
-		PrepareReturn PrepareLua(const char* sql, int nByte);
-		PrepareReturn Prepare_v2Lua(const char* sql, int nByte);
-		PrepareReturn Prepare16Lua(const char* sql, int nByte);
-		PrepareReturn Prepare16_v2Lua(const char* sql, int nByte);
-
-		int StepLua(PrepareReturn r) { return sqlite3_step(r.ppStmt); }
-		int FinalizeLua(PrepareReturn r) { return sqlite3_finalize(r.ppStmt); }
-		int ResetLua(PrepareReturn r) { return sqlite3_reset(r.ppStmt); }
-
-		const char * PrepareErrStrLua(PrepareReturn r) { return sqlite3_errstr(r.ret); }
-		int PrepareErrIntLua(PrepareReturn r) { return r.ret; }
-
-		const char * GetPrepareTailLua(PrepareReturn pr) { return pr.pzTail.c; }
-		const void * GetPrepare16TailLua(PrepareReturn pr) { return pr.pzTail.v; }
+		SQLite3::SQLiteDB * GetConnectionLua() { return new SQLite3::SQLiteDB(this->m_pDB); }
 		////////////////////////////////////////////////////////////////////////
 	protected:
         ////////////////////////////////////////////////////////////////////////
@@ -82,7 +73,7 @@ namespace SQLite
         void Activate() override;
         void Deactivate() override;
         ////////////////////////////////////////////////////////////////////////
-	private:
+	protected:
 		const char * m_dbPath;
 		sqlite3 *m_pDB;
 	private:
@@ -93,6 +84,7 @@ namespace SQLite
 			OPENV2
 		};
 		OpenType m_OpenType;
+	protected:
 	public:
 		class LuaHandler : public SQLiteLuaBus::Handler, public AZ::BehaviorEBusHandler {
 		public:
@@ -109,14 +101,4 @@ namespace SQLite
 			int SqlCallback(void * cbargs, int argc, AZStd::vector<AZStd::string> argv, AZStd::vector<AZStd::string> azColName);
 		};
     };
-
-	/*namespace SQLite3 {
-		class SQLite {
-		public:
-			AZ_TYPE_INFO(SQLite, "{A669689D-4938-473C-BE0A-C0B111BB6CF3}")
-			sqlite3 * ptr;
-		};
-
-		void SQLite3Constructor(SQLite * thisPtr, AZ::ScriptDataContext& dc);
-	}*/
 }
