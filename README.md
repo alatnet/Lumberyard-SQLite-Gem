@@ -34,7 +34,7 @@ To retrieve the database in the entity you use SQLiteLY.Event.GetConnection().
 Afterwards, any and all lua database functions will work with the sqlite database object.  
 NOTE! DO NOT call Close on a database connection that is associated with an entity.  
 The entity will automatically close it\'s database connection apon destruction.  
-Calling Close or Close_v2 on an entity database connection will return a SQLITE_MISUSE error;
+Calling Close or Close_v2 on an entity database connection will return a SQLITE_MISUSE error.  
 Calling any of the Open functions on an entity will automatically close and open the database connection with the appropriate sqlite open function that was requested.
 
 ## Lua Classes
