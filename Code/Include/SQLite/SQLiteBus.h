@@ -21,7 +21,6 @@ namespace SQLite
 
 		using BusIdType = AZ::EntityId;
 	public:
-	public:
         // Public functions
 		virtual int Open(const char * path) = 0;
 		virtual int Open16(const char * path) = 0;
@@ -35,7 +34,7 @@ namespace SQLite
 		virtual int ExtErrCode() = 0;
 		virtual const char * ErrMsg() = 0;
 		virtual const void * ErrMsg16() = 0;
-	protected:
+	protected: //Lua specific functions. Not exposed for usage in regular C++.
 		virtual int ExecLua(const char *sql, void * cbarg) = 0;
 		virtual int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg) = 0;
 		virtual SQLite3::SQLiteDB * GetConnectionLua() = 0;

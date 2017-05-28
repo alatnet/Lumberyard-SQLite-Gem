@@ -16,9 +16,9 @@
       "Source/SQLiteSystemComponent.h",
       "Source/SQLiteComponent.cpp",
       "Source/SQLiteComponent.h",
-      "Source/sqlite3.c",
       "Source/InternalFunctions.cpp",
-      "Source/InternalFunctions.h"
+      "Source/InternalFunctions.h",
+      "Source/sqlite3.c"
     ],
     "Source/Classes": [
       "Source/SQLiteClasses.h",

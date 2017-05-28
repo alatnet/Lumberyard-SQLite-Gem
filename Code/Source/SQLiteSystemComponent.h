@@ -64,7 +64,7 @@ namespace SQLite
 		int ExecLua(const char *sql, void * cbarg);
 		int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg);
 
-		SQLite3::SQLiteDB * GetConnectionLua() { return new SQLite3::SQLiteDB(this->m_pDB); }
+		SQLite3::SQLiteDB * GetConnectionLua() { return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); }
 		////////////////////////////////////////////////////////////////////////
 	protected:
         ////////////////////////////////////////////////////////////////////////

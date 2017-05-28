@@ -1,5 +1,7 @@
 #pragma once
 
+#include <AzCore/Component/Component.h>
+
 #include <AzCore\RTTI\TypeInfo.h>
 #include <AzCore/RTTI/BehaviorContext.h>
 
@@ -16,6 +18,7 @@ namespace SQLite3 {
 	public:
 		SQLiteDB() {}
 		SQLiteDB(sqlite3* db) { m_pDB = db; }
+		SQLiteDB(sqlite3* db, AZ::EntityId id);
 	public:
 		int Open(const char * path);
 		int Open16(const char * path);
@@ -97,6 +100,8 @@ namespace SQLite3 {
 		sqlite3 *m_pDB;
 	public:
 		static void RegisterBehaviorContext(AZ::BehaviorContext* bc);
+	private:
+		AZ::EntityId m_entityid;
 	};
 	////////////////////////////////////////////////////////////////////////
 }

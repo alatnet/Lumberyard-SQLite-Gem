@@ -84,15 +84,19 @@ namespace SQLite {
 
 	int SQLiteSystemComponent::Open(const char * path) {
 		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
+		int ret;
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:
-			sqlite3_close(this->m_pDB);
+			ret = sqlite3_close(this->m_pDB);
 			break;
 		case OPENV2:
-			sqlite3_close_v2(this->m_pDB);
+			ret = sqlite3_close_v2(this->m_pDB);
 			break;
 		}
+
+		if (ret != SQLITE_OK) return ret;
+
 		this->m_dbPath = path;
 		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
 		return sqlite3_open(path, &(this->m_pDB));
@@ -101,15 +105,19 @@ namespace SQLite {
 
 	int SQLiteSystemComponent::Open16(const char * path) {
 		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
+		int ret;
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:
-			sqlite3_close(this->m_pDB);
+			ret = sqlite3_close(this->m_pDB);
 			break;
 		case OPENV2:
-			sqlite3_close_v2(this->m_pDB);
+			ret = sqlite3_close_v2(this->m_pDB);
 			break;
 		}
+
+		if (ret != SQLITE_OK) return ret;
+
 		this->m_dbPath = path;
 		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
 		return sqlite3_open16(path, &(this->m_pDB));
@@ -118,16 +126,20 @@ namespace SQLite {
 
 	int SQLiteSystemComponent::Open_v2(const char * path, int flags, const char *zVfs) {
 		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
+		int ret;
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:
-			sqlite3_close(this->m_pDB);
+			ret = sqlite3_close(this->m_pDB);
 			break;
 		case OPENV2:
-			sqlite3_close_v2(this->m_pDB);
+			ret = sqlite3_close_v2(this->m_pDB);
 			break;
 		}
 		this->m_dbPath = path;
+
+		if (ret != SQLITE_OK) return ret;
+
 		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
 		return sqlite3_open_v2(path, &(this->m_pDB), flags, zVfs);
 		this->m_OpenType = OPENV2;

@@ -3,32 +3,60 @@
 #include "InternalFunctions.h"
 
 #include "SQLiteStmt.h"
+#include "SQLite\SQLiteBus.h"
 
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
 	//SQLite DB
+	SQLiteDB::SQLiteDB(sqlite3* db, AZ::EntityId id) {
+		this->m_pDB = db;
+		this->m_entityid = id;
+	}
+
 	int SQLiteDB::Open(const char * path) {
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
-		if (path == nullptr) path = ":memory:";
-		return sqlite3_open(path, &this->m_pDB);
+		if (this->m_entityid.IsValid()) {
+			int ret;
+			SQLite::SQLiteRequestBus::EventResult(ret,this->m_entityid, &SQLite::SQLiteRequestBus::Events::Open, path);
+			return ret;
+		} else {
+			AZ_Printf("SQLite3", "Opening Database - %s", path);
+			if (path == nullptr) path = ":memory:";
+			return sqlite3_open(path, &this->m_pDB);
+		}
 	}
+
 	int SQLiteDB::Open16(const char * path) {
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
-		if (path == nullptr) path = ":memory:";
-		return sqlite3_open16(path, &this->m_pDB);
+		if (this->m_entityid.IsValid()) {
+			int ret;
+			SQLite::SQLiteRequestBus::EventResult(ret, this->m_entityid, &SQLite::SQLiteRequestBus::Events::Open16, path);
+			return ret;
+		} else {
+			AZ_Printf("SQLite3", "Opening Database - %s", path);
+			if (path == nullptr) path = ":memory:";
+			return sqlite3_open16(path, &this->m_pDB);
+		}
 	}
+
 	int SQLiteDB::Open_v2(const char * path, int flags, const char *zVfs) {
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
-		if (path == nullptr) path = ":memory:";
-		return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+		if (this->m_entityid.IsValid()) {
+			int ret;
+			SQLite::SQLiteRequestBus::EventResult(ret, this->m_entityid, &SQLite::SQLiteRequestBus::Events::Open_v2, path, flags, zVfs);
+			return ret;
+		} else {
+			AZ_Printf("SQLite3", "Opening Database - %s", path);
+			if (path == nullptr) path = ":memory:";
+			return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+		}
 	}
 
 	int SQLiteDB::Close() {
+		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
 		AZ_Printf("SQLite3", "Closing Database");
 		return sqlite3_close(this->m_pDB);
 	}
 
 	int SQLiteDB::Close_v2() {
+		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
 		AZ_Printf("SQLite3", "Closing Database");
 		return sqlite3_close_v2(this->m_pDB);
 	}
