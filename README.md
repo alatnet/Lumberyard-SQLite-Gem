@@ -69,7 +69,7 @@ int main(){
     ret,
     sysDb,
     &SQLite3::SQLiteDBBus::Events::Exec,
-    "SELECT * FROM Individual;",
+    "SELECT * FROM System;",
     [](void* cbarg, int argc, char **argv, char **azColName) -> int {
       for (int i = 0; i < argc; i++) CryLog("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
       return 0;
