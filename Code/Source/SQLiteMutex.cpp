@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "SQLiteMutex.h"
+#include "SQLite\SQLiteMutex.h"
 
 namespace SQLite3 {
 	void SQLiteMutex::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
@@ -11,4 +11,28 @@ namespace SQLite3 {
 			;
 	#undef SQLITEMUTEX_METHOD
 	}
+
+	SQLiteMutex::SQLiteMutex(int N) {
+		this->m_pMutex = sqlite3_mutex_alloc(N);
+		SQLiteMutexBus::Handler::BusConnect(this);
+	}
+
+	SQLiteMutex::SQLiteMutex(sqlite3_mutex * mutex) {
+		this->m_pMutex = mutex;
+		SQLiteMutexBus::Handler::BusConnect(this);
+	}
+
+	SQLiteMutex::~SQLiteMutex() {
+		SQLiteMutexBus::Handler::BusDisconnect();
+		sqlite3_mutex_free(this->m_pMutex);
+	}
+
+	void SQLiteMutex::Enter() { sqlite3_mutex_enter(this->m_pMutex); }
+	int SQLiteMutex::Try() { return sqlite3_mutex_try(this->m_pMutex); }
+	void SQLiteMutex::Leave() { sqlite3_mutex_leave(this->m_pMutex); }
+
+	/*#ifndef NDEBUG
+	int SQLiteMutex::Held() { return sqlite3_mutex_held(this->m_pMutex); }
+	int SQLiteMutex::NotHeld(){ return sqlite3_mutex_notheld(this->m_pMutex); }
+	#endif*/
 }

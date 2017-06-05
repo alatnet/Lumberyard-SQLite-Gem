@@ -3,10 +3,9 @@
 
 #include <AzCore/EBus/EBus.h>
 #include <SQLite\sqlite3.h>
-
-namespace SQLite3 {
-	class SQLiteDB;
-}
+#include <SQLite\SQLiteDB.h>
+#include <SQLite\SQLiteBackup.h>
+#include <SQLite\SQLiteVFS.h>
 
 namespace SQLite
 {
@@ -22,22 +21,18 @@ namespace SQLite
 		using BusIdType = AZ::EntityId;
 	public:
         // Public functions
-		virtual int Open(const char * path) = 0;
-		virtual int Open16(const char * path) = 0;
-		virtual int Open_v2(const char * path, int flags, const char *zVfs) = 0;
-
-		virtual int Exec(const char *sql, int(*callback)(void*, int, char**, char**), void * cbarg, char **errmsg) = 0;
-
-		virtual sqlite3 * GetConnection() = 0;
-
-		virtual int ErrCode() = 0;
-		virtual int ExtErrCode() = 0;
-		virtual const char * ErrMsg() = 0;
-		virtual const void * ErrMsg16() = 0;
+		virtual SQLite3::SQLiteDB * GetConnection() = 0;
+		virtual SQLite3::SQLiteDB * NewConnection() = 0;
+	public:
+		virtual SQLite3::SQLiteBackup * NewBackup(SQLite3::SQLiteDB * dest, const char * dname, SQLite3::SQLiteDB * src, const char *sname) = 0;
+	public:
+		virtual SQLite3::SQLiteMutex * NewMutex(int N) = 0;
+	public:
+		virtual SQLite3::SQLiteVFS * NewVFS(const char * vfsName) = 0;
+		virtual SQLite3::SQLiteVFS * NewVFS(sqlite3_vfs * vfs) = 0;
 	protected: //Lua specific functions. Not exposed for usage in regular C++.
 		virtual int ExecLua(const char *sql, void * cbarg) = 0;
 		virtual int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg) = 0;
-		virtual SQLite3::SQLiteDB * GetConnectionLua() = 0;
 	};
     using SQLiteRequestBus = AZ::EBus<SQLiteRequests>;
 } // namespace SQLite

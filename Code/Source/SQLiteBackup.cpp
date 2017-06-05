@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "SQLiteBackup.h"
+#include "SQLite\SQLiteBackup.h"
 
 namespace SQLite3 {
 	void SQLiteBackup::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
@@ -16,4 +16,21 @@ namespace SQLite3 {
 		#undef SQLITEBAK_METHOD
 		////////////////////////////////////////////////////////////////////////
 	}
+
+	SQLiteBackup::SQLiteBackup(SQLiteDB * dest, const char * dname, SQLiteDB * src, const char *sname) {
+		this->m_finished = false;
+		this->m_pBak = sqlite3_backup_init(dest->m_pDB, dname, src->m_pDB, sname);
+		SQLiteBackupBus::Handler::BusConnect(this);
+	}
+	SQLiteBackup::~SQLiteBackup() {
+		SQLiteBackupBus::Handler::BusDisconnect();
+		if (!this->m_finished) this->Finish();
+	}
+	int SQLiteBackup::Step(int nPage) { return sqlite3_backup_step(this->m_pBak, nPage); }
+	int SQLiteBackup::Finish() {
+		this->m_finished = true;
+		return sqlite3_backup_finish(this->m_pBak);
+	}
+	int SQLiteBackup::Remaining() { return sqlite3_backup_remaining(this->m_pBak); }
+	int SQLiteBackup::PageCount() { return sqlite3_backup_pagecount(this->m_pBak); }
 }

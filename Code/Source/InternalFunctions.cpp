@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "InternalFunctions.h"
 
-#include "SQLiteDB.h"
+#include "SQLite\SQLiteDB.h"
 
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
@@ -225,11 +225,7 @@ namespace SQLite3 {
 				dc.PushResult(pHighwater);
 			}
 		}
-
-		int SQLiteStatus64(int op, __int64 *pCurrent, __int64 *pHighwater, int resetFlag) {
-			return sqlite3_status64(op, (sqlite3_int64*)pCurrent, (sqlite3_int64*)pHighwater, resetFlag);
-		}
-
+		
 		void SQLiteStatus64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc) {
 			if (dc.GetNumArguments() == 2) {
 				int op, resetFlag;
@@ -245,17 +241,9 @@ namespace SQLite3 {
 			}
 		}
 
-		__int64 SQLiteMemoryUsed() {
-			return (__int64)sqlite3_memory_used();
-		}
-
-		__int64 SQLiteMemoryHighWater(int resetFlag) {
-			return (__int64)sqlite3_memory_highwater(resetFlag);
-		}
-
-		__int64 SQLiteSoftHeapLimit64(__int64 N) {
-			return (__int64)sqlite3_soft_heap_limit64((sqlite3_int64)N);
-		}
+		__int64 SQLiteMemoryUsed() { return (__int64)sqlite3_memory_used(); }
+		__int64 SQLiteMemoryHighWater(int resetFlag) { return (__int64)sqlite3_memory_highwater(resetFlag); }
+		__int64 SQLiteSoftHeapLimit64(__int64 N) { return (__int64)sqlite3_soft_heap_limit64((sqlite3_int64)N); }
 	}
 	////////////////////////////////////////////////////////////////////////
 }

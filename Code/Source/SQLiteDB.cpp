@@ -1,90 +1,10 @@
 #include "StdAfx.h"
-#include "SQLiteDB.h"
+#include "SQLite\SQLiteDB.h"
 #include "InternalFunctions.h"
 
-#include "SQLiteStmt.h"
-#include "SQLite\SQLiteBus.h"
+#include "SQLite\SQLiteStmt.h"
 
 namespace SQLite3 {
-	////////////////////////////////////////////////////////////////////////
-	//SQLite DB
-	SQLiteDB::SQLiteDB(sqlite3* db, AZ::EntityId id) {
-		this->m_pDB = db;
-		this->m_entityid = id;
-	}
-
-	int SQLiteDB::Open(const char * path) {
-		if (this->m_entityid.IsValid()) {
-			int ret;
-			SQLite::SQLiteRequestBus::EventResult(ret,this->m_entityid, &SQLite::SQLiteRequestBus::Events::Open, path);
-			return ret;
-		} else {
-			AZ_Printf("SQLite3", "Opening Database - %s", path);
-			if (path == nullptr) path = ":memory:";
-			return sqlite3_open(path, &this->m_pDB);
-		}
-	}
-
-	int SQLiteDB::Open16(const char * path) {
-		if (this->m_entityid.IsValid()) {
-			int ret;
-			SQLite::SQLiteRequestBus::EventResult(ret, this->m_entityid, &SQLite::SQLiteRequestBus::Events::Open16, path);
-			return ret;
-		} else {
-			AZ_Printf("SQLite3", "Opening Database - %s", path);
-			if (path == nullptr) path = ":memory:";
-			return sqlite3_open16(path, &this->m_pDB);
-		}
-	}
-
-	int SQLiteDB::Open_v2(const char * path, int flags, const char *zVfs) {
-		if (this->m_entityid.IsValid()) {
-			int ret;
-			SQLite::SQLiteRequestBus::EventResult(ret, this->m_entityid, &SQLite::SQLiteRequestBus::Events::Open_v2, path, flags, zVfs);
-			return ret;
-		} else {
-			AZ_Printf("SQLite3", "Opening Database - %s", path);
-			if (path == nullptr) path = ":memory:";
-			return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
-		}
-	}
-
-	int SQLiteDB::Close() {
-		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
-		AZ_Printf("SQLite3", "Closing Database");
-		return sqlite3_close(this->m_pDB);
-	}
-
-	int SQLiteDB::Close_v2() {
-		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
-		AZ_Printf("SQLite3", "Closing Database");
-		return sqlite3_close_v2(this->m_pDB);
-	}
-
-	SQLiteStmt * SQLiteDB::Prepare(const char * sql, int nByte) {
-		SQLiteStmt *ret = new SQLiteStmt();
-		ret->m_err = sqlite3_prepare(this->m_pDB, sql, nByte, &ret->m_pStmt, nullptr);
-		return ret;
-	}
-
-	SQLiteStmt * SQLiteDB::Prepare_v2(const char * sql, int nByte) {
-		SQLiteStmt *ret = new SQLiteStmt();
-		ret->m_err = sqlite3_prepare_v2(this->m_pDB, sql, nByte, &ret->m_pStmt, nullptr);
-		return ret;
-	}
-
-	SQLiteStmt * SQLiteDB::Prepare16(const char * sql, int nByte) {
-		SQLiteStmt *ret = new SQLiteStmt();
-		ret->m_err = sqlite3_prepare16(this->m_pDB, sql, nByte, &ret->m_pStmt, nullptr);
-		return ret;
-	}
-
-	SQLiteStmt * SQLiteDB::Prepare16_v2(const char * sql, int nByte) {
-		SQLiteStmt *ret = new SQLiteStmt();
-		ret->m_err = sqlite3_prepare16_v2(this->m_pDB, sql, nByte, &ret->m_pStmt, nullptr);
-		return ret;
-	}
-
 	void SQLiteDB::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		////////////////////////////////////////////////////////////////////////
 		// SQLite class
@@ -102,15 +22,15 @@ namespace SQLite3 {
 			SQLITEDB_METHOD(Open16, nullptr, "")
 			SQLITEDB_METHOD(Open_v2, nullptr, "")
 			SQLITEDB_METHOD(Close, nullptr, "")
-			SQLITEDB_METHOD(Close_v2, nullptr, "")
+			//SQLITEDB_METHOD(Close_v2, nullptr, "")
 			SQLITEDB_METHOD(Prepare, nullptr, "")
 				SQLITE_METHOD_OVERRIDE(SQLitePrepareScript)
 			SQLITEDB_METHOD(Prepare_v2, nullptr, "")
 				SQLITE_METHOD_OVERRIDE(SQLitePrepare_v2Script)
 			/*SQLITEDB_METHOD(Prepare16, nullptr, "")
-				SQLITEDB_METHOD_OVERRIDE(SQLitePrepare16Script)
+			SQLITEDB_METHOD_OVERRIDE(SQLitePrepare16Script)
 			SQLITEDB_METHOD(Prepare16_v2, nullptr, "")
-				SQLITEDB_METHOD_OVERRIDE(SQLitePrepare16_v2Script)*/
+			SQLITEDB_METHOD_OVERRIDE(SQLitePrepare16_v2Script)*/
 			SQLITEDB_METHOD(ErrCode, nullptr, "")
 			SQLITEDB_METHOD(ExtErrCode, nullptr, "")
 			SQLITEDB_METHOD(ErrMsg, nullptr, "")
@@ -140,7 +60,7 @@ namespace SQLite3 {
 				SQLITE_METHOD_OVERRIDE(Wal_Checkpoint_v2Script)
 
 			//SQLite3 Raw Methods
-			SQLITE_METHOD("ErrStr", errstr, 0, "")
+			SQLITE_METHOD("ErrStr", errstr, nullptr, "")
 			SQLITE_METHOD("LibVersion", libversion, nullptr, "")
 			SQLITE_METHOD("LibVersion_Number", libversion_number, nullptr, "")
 			SQLITE_METHOD("SourceID", sourceid, nullptr, "")
@@ -152,11 +72,14 @@ namespace SQLite3 {
 			SQLITE_METHOD("URI_Int64", uri_int64, nullptr, "")
 				SQLITE_METHOD_OVERRIDE(SQLiteURI_Int64Script)
 			SQLITE_METHOD("Status", status, nullptr, "")
-			//->Method("Status", &Internal::SQLiteStatus, nullptr, "")
 				SQLITE_METHOD_OVERRIDE(SQLiteStatusScript)
-			->Method("Status64", &Internal::SQLiteStatus64, nullptr, "")
+			SQLITE_METHOD("Status64", status64, nullptr, "")
 				SQLITE_METHOD_OVERRIDE(SQLiteStatus64Script)
 			SQLITE_METHOD("Complete", complete, nullptr, "")
+			//SQLITEDB_METHOD(Memory_Used, nullptr, "")
+			//SQLITEDB_METHOD(Memory_HighWater, nullptr, "")
+			//SQLITEDB_METHOD(Soft_Heap_Limit64, nullptr, "")
+
 			->Method("Memory_Used", &Internal::SQLiteMemoryUsed, nullptr, "")
 			->Method("Memory_HighWater", &Internal::SQLiteMemoryHighWater, nullptr, "")
 			->Method("Soft_Heap_Limit64", &Internal::SQLiteSoftHeapLimit64, nullptr, "")
@@ -427,7 +350,7 @@ namespace SQLite3 {
 			SQLITE_CONSTANT(UTF16_ALIGNED)
 			SQLITE_CONSTANT(UTF8)
 			SQLITE_CONSTANT(VTAB_CONSTRAINT_SUPPORT)
-			
+
 			//Enums
 			//Result Codes
 			SQLITE_ENUM(OK)
@@ -546,5 +469,176 @@ namespace SQLite3 {
 		#undef SQLITE_ENUM
 		////////////////////////////////////////////////////////////////////////
 	}
+
 	////////////////////////////////////////////////////////////////////////
+	//SQLite DB
+
+	SQLiteDB::SQLiteDB() {
+		SQLiteDBBus::Handler::BusConnect(this);
+		this->m_OpenType = CLOSED;
+	}
+
+	SQLiteDB::SQLiteDB(sqlite3* db) {
+		m_pDB = db;
+		SQLiteDBBus::Handler::BusConnect(this);
+		this->m_OpenType = CLOSED;
+	}
+
+	SQLiteDB::SQLiteDB(sqlite3* db, AZ::EntityId id) {
+		this->m_pDB = db;
+		this->m_entityid = id;
+		SQLiteDBBus::Handler::BusConnect(this);
+		this->m_OpenType = CLOSED;
+	}
+
+	SQLiteDB::SQLiteDB(SQLiteDB * db) {
+		this->m_pDB = db->m_pDB;
+		SQLiteDBBus::Handler::BusConnect(this);
+		this->m_OpenType = CLOSED;
+	}
+
+	SQLiteDB::SQLiteDB(SQLiteDB * db, AZ::EntityId id) {
+		this->m_pDB = db->m_pDB;
+		this->m_entityid = id;
+		SQLiteDBBus::Handler::BusConnect(this);
+		this->m_OpenType = CLOSED;
+	}
+
+	SQLiteDB::~SQLiteDB() {
+		SQLiteDBBus::Handler::BusDisconnect();
+	}
+
+	int SQLiteDB::Open(const char * path) {
+		if (this->m_OpenType != CLOSED) {
+			int err = this->Close2Open();
+			if (err != SQLITE_OK) return err;
+		}
+
+		AZ_Printf("SQLite3", "Opening Database - %s", path);
+		if (path == nullptr) path = ":memory:";
+		this->m_OpenType = OPEN;
+		return sqlite3_open(path, &this->m_pDB);
+	}
+
+	int SQLiteDB::Open16(const char * path) {
+		if (this->m_OpenType != CLOSED) {
+			int err = this->Close2Open();
+			if (err != SQLITE_OK) return err;
+		}
+
+		AZ_Printf("SQLite3", "Opening Database - %s", path);
+		if (path == nullptr) path = ":memory:";
+		this->m_OpenType = OPEN16;
+		return sqlite3_open16(path, &this->m_pDB);
+	}
+
+	int SQLiteDB::Open_v2(const char * path, int flags, const char *zVfs) {
+		if (this->m_OpenType != CLOSED) {
+			int err = this->Close2Open();
+			if (err != SQLITE_OK) return err;
+		}
+
+		AZ_Printf("SQLite3", "Opening Database - %s", path);
+		if (path == nullptr) path = ":memory:";
+		this->m_OpenType = OPENV2;
+		return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+	}
+
+	//visible close
+	//if entity id is valid allows ONLY the entity to close it.
+	int SQLiteDB::Close() {
+		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
+		return this->Close2Open();
+		//return sqlite3_close(this->m_pDB);
+	}
+
+	//hidden close
+	//used to be able to close a connection for a follow up to an open.
+	int SQLiteDB::Close2Open() {
+		AZ_Printf("SQLite3", "Closing Database");
+		switch (this->m_OpenType) {
+		case OPEN:
+		case OPEN16:
+			return sqlite3_close(this->m_pDB);
+			break;
+		case OPENV2:
+			return sqlite3_close_v2(this->m_pDB);
+			break;
+		}
+		return SQLITE_OK;
+	}
+
+	SQLiteStmt * SQLiteDB::Prepare(const char * sql, int nByte, const char **pzTail) {
+		SQLiteStmt *ret = new SQLiteStmt();
+		ret->m_err = sqlite3_prepare(this->m_pDB, sql, nByte, &ret->m_pStmt, pzTail);
+		return ret;
+	}
+
+	SQLiteStmt * SQLiteDB::Prepare_v2(const char * sql, int nByte, const char **pzTail) {
+		SQLiteStmt *ret = new SQLiteStmt();
+		ret->m_err = sqlite3_prepare_v2(this->m_pDB, sql, nByte, &ret->m_pStmt, pzTail);
+		return ret;
+	}
+
+	SQLiteStmt * SQLiteDB::Prepare16(const char * sql, int nByte, const void **pzTail) {
+		SQLiteStmt *ret = new SQLiteStmt();
+		ret->m_err = sqlite3_prepare16(this->m_pDB, sql, nByte, &ret->m_pStmt, pzTail);
+		return ret;
+	}
+
+	SQLiteStmt * SQLiteDB::Prepare16_v2(const char * sql, int nByte, const void **pzTail) {
+		SQLiteStmt *ret = new SQLiteStmt();
+		ret->m_err = sqlite3_prepare16_v2(this->m_pDB, sql, nByte, &ret->m_pStmt, pzTail);
+		return ret;
+	}
+	////////////////////////////////////////////////////////////////////////
+
+	int SQLiteDB::Exec(const char *sql, int(*callback)(void*, int, char**, char**), void *cbarg, char **errmsg) { return sqlite3_exec(this->m_pDB,sql, callback, cbarg, errmsg); }
+	int SQLiteDB::ErrCode() { return sqlite3_errcode(this->m_pDB); }
+	int SQLiteDB::ExtErrCode() { return sqlite3_extended_errcode(this->m_pDB); }
+	const char * SQLiteDB::ErrMsg() { return sqlite3_errmsg(this->m_pDB); }
+	const void * SQLiteDB::ErrMsg16() { return sqlite3_errmsg16(this->m_pDB); }
+	int SQLiteDB::Limit(int id, int newVal) { return sqlite3_limit(this->m_pDB, id, newVal); }
+	SQLiteMutex * SQLiteDB::DB_Mutex() { return new SQLiteMutex(sqlite3_db_mutex(this->m_pDB)); }
+	int SQLiteDB::DB_CacheFlush() { return sqlite3_db_cacheflush(this->m_pDB); }
+	const char * SQLiteDB::DB_Filename(const char * zDbName) { return sqlite3_db_filename(this->m_pDB, zDbName); }
+	int SQLiteDB::DB_ReadOnly(const char *zDbName) { return sqlite3_db_readonly(this->m_pDB, zDbName); }
+	int SQLiteDB::DB_Release_Memory() { return sqlite3_db_release_memory(this->m_pDB); }
+	int SQLiteDB::DB_Status(int op, int *pCur, int *pHiwtr, int resetFlg) { return sqlite3_db_status(this->m_pDB, op, pCur, pHiwtr, resetFlg); } //override
+	int SQLiteDB::Declare_VTab(const char * zSQL) { return sqlite3_declare_vtab(this->m_pDB, zSQL); }
+	int SQLiteDB::Enable_Load_Extension(int onoff) { return sqlite3_enable_load_extension(this->m_pDB, onoff); }
+	int SQLiteDB::File_Control(const char * zDbName, int op, void * x) { return sqlite3_file_control(this->m_pDB, zDbName, op, x); }
+	int SQLiteDB::Get_Table(const char *zSql, char ***pazResult, int *pnRow, int *pnColumn, char **pzErrmsg) { return sqlite3_get_table(this->m_pDB, zSql, pazResult, pnRow, pnColumn, pzErrmsg); }
+	void SQLiteDB::Free_Table(char **result) { sqlite3_free_table(result); }
+	int SQLiteDB::Get_AutoCommit() { return sqlite3_get_autocommit(this->m_pDB); }
+	void SQLiteDB::Interrupt() { sqlite3_interrupt(this->m_pDB); }
+	__int64 SQLiteDB::Last_Insert_RowId() { return (__int64)sqlite3_last_insert_rowid(this->m_pDB); }
+	int SQLiteDB::Load_Extension(const char * zFile, const char * zProc, char ** pzErrMsg) { return sqlite3_load_extension(this->m_pDB, zFile, zProc, pzErrMsg); }; //override
+	int SQLiteDB::Overload_Function(const char * zFuncName, int nArgs) { return sqlite3_overload_function(this->m_pDB, zFuncName, nArgs); }
+	void SQLiteDB::Set_Last_Insert_RowId(__int64 N) { sqlite3_set_last_insert_rowid(this->m_pDB, N); }
+	int SQLiteDB::System_ErrNo() { return sqlite3_system_errno(this->m_pDB); }
+	int SQLiteDB::Total_Changes() { return sqlite3_total_changes(this->m_pDB); }
+	int SQLiteDB::VTab_On_Conflict() { return sqlite3_vtab_on_conflict(this->m_pDB); }
+	int SQLiteDB::Wal_AutoCheckpoint(int N) { return sqlite3_wal_autocheckpoint(this->m_pDB, N); }
+	int SQLiteDB::Wal_Checkpoint(const char * zDB) { return sqlite3_wal_checkpoint(this->m_pDB, zDB); }
+	int SQLiteDB::Table_Column_Metadata(const char *zDbName, const char *zTableName, const char *zColumnName, char const **pzDataType, char const ** pzCollSeq, int *pNotNull, int *pPrimaryKey, int *pAutoinc) { return sqlite3_table_column_metadata(this->m_pDB, zDbName, zTableName, zColumnName, pzDataType, pzCollSeq, pNotNull, pPrimaryKey, pAutoinc); }
+	int SQLiteDB::Wal_Checkpoint_v2(const char *zDb, int eMode, int *pnLog, int *pnCkpt) { return sqlite3_wal_checkpoint_v2(this->m_pDB, zDb, eMode, pnLog, pnCkpt); } //override
+	int SQLiteDB::Status64(int op, __int64 *pCurrent, __int64 *pHighwater, int resetFlag) { return sqlite3_status64(op, (sqlite3_int64*)pCurrent, (sqlite3_int64*)pHighwater, resetFlag); }
+	__int64 SQLiteDB::Memory_Used() { return (__int64)sqlite3_memory_used(); }
+	__int64 SQLiteDB::Memory_HighWater(int resetFlag) { return (__int64)sqlite3_memory_highwater(resetFlag); }
+	__int64 SQLiteDB::Soft_Heap_Limit64(__int64 N) { return (__int64)sqlite3_soft_heap_limit64((sqlite3_int64)N); }
+	const char * SQLiteDB::ErrStr(int rc) { return sqlite3_errstr(rc); }
+	const char * SQLiteDB::LibVersion() { return sqlite3_libversion(); }
+	int SQLiteDB::LibVersion_Number() { return sqlite3_libversion_number(); }
+	const char * SQLiteDB::SourceID() { return sqlite3_sourceid(); }
+	int SQLiteDB::Enable_Shared_Cache(int enable) { return sqlite3_enable_shared_cache(enable); }
+	void SQLiteDB::Reset_Auto_Ext() { sqlite3_reset_auto_extension(); }
+	int SQLiteDB::ThreadSafe() { return sqlite3_threadsafe(); }
+	const char * SQLiteDB::URI_Parameter(const char *zFilename, const char *zParam) { return sqlite3_uri_parameter(zFilename, zParam); }
+	int SQLiteDB::URI_Boolean(const char *zFilename, const char *zParam, int bDflt) { return sqlite3_uri_boolean(zFilename, zParam, bDflt); }
+	__int64 SQLiteDB::URI_Int64(const char *zFilename, const char *zParam, int bDflt) { return (__int64)sqlite3_uri_int64(zFilename, zParam, bDflt); }
+	int SQLiteDB::Status(int op, int *pCurrent, int *pHighwater, int resetFlag) { return sqlite3_status(op, pCurrent, pHighwater, resetFlag); }
+	int SQLiteDB::Complete(const char *zSql) { return sqlite3_complete(zSql); }
+	int SQLiteDB::Complete16(const void *zSql) { return sqlite3_complete16(zSql); }
+
 }

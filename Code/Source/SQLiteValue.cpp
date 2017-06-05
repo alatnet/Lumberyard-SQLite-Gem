@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "SQLiteValue.h"
+#include "SQLite\SQLiteValue.h"
 
 namespace SQLite3 {
 	void SQLiteValue::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
@@ -26,4 +26,36 @@ namespace SQLite3 {
 		#undef SQLITEVALUE_METHOD
 		////////////////////////////////////////////////////////////////////////
 	}
+
+	SQLiteValue::SQLiteValue() {
+		this->m_avail = true;
+		SQLiteValueBus::Handler::BusConnect(this);
+	}
+	SQLiteValue::SQLiteValue(sqlite3_value * val) {
+		this->m_avail = true;
+		this->m_pVal = val;
+		SQLiteValueBus::Handler::BusConnect(this);
+	}
+	SQLiteValue::~SQLiteValue() {
+		SQLiteValueBus::Handler::BusDisconnect();
+		if (this->m_avail) this->Free();
+	}
+	const void* SQLiteValue::Blob() { return sqlite3_value_blob(this->m_pVal); }
+	int SQLiteValue::Bytes() { return sqlite3_value_bytes(this->m_pVal); }
+	int SQLiteValue::Bytes16() { return sqlite3_value_bytes16(this->m_pVal); }
+	double SQLiteValue::Double() { return sqlite3_value_double(this->m_pVal); }
+	int SQLiteValue::Int() { return sqlite3_value_int(this->m_pVal); }
+	__int64 SQLiteValue::Int64() { return (__int64)sqlite3_value_int64(this->m_pVal); }
+	const char* SQLiteValue::Text() { return (const char *)sqlite3_value_text(this->m_pVal); }
+	const void* SQLiteValue::Text16() { return sqlite3_value_text16(this->m_pVal); }
+	const void* SQLiteValue::Text16LE() { return sqlite3_value_text16le(this->m_pVal); }
+	const void* SQLiteValue::Text16BE() { return sqlite3_value_text16be(this->m_pVal); }
+	int SQLiteValue::Type() { return sqlite3_value_type(this->m_pVal); }
+	int SQLiteValue::Numeric_Type() { return sqlite3_value_numeric_type(this->m_pVal); }
+	SQLiteValue * SQLiteValue::Value_Dup() { return new SQLiteValue(sqlite3_value_dup(this->m_pVal)); }
+	void SQLiteValue::Free() {
+		this->m_avail = false;
+		return sqlite3_value_free(this->m_pVal);
+	}
+	unsigned int SQLiteValue::Subtype() { return sqlite3_value_subtype(this->m_pVal); }
 }

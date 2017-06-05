@@ -20,20 +20,22 @@
       "Source/InternalFunctions.h",
       "Source/sqlite3.c"
     ],
+    "Include/Classes": [
+      "Include/SQLite/SQLiteClasses.h",
+      "Include/SQLite/SQLiteValue.h",
+      "Include/SQLite/SQLiteMutex.h",
+      "Include/SQLite/SQLiteStmt.h",
+      "Include/SQLite/SQLiteDB.h",
+      "Include/SQLite/SQLiteBackup.h",
+      "Include/SQLite/SQLiteVFS.h"
+    ],
     "Source/Classes": [
-      "Source/SQLiteClasses.h",
       "Source/SQLiteValue.cpp",
-      "Source/SQLiteValue.h",
       "Source/SQLiteMutex.cpp",
-      "Source/SQLiteMutex.h",
       "Source/SQLiteStmt.cpp",
-      "Source/SQLiteStmt.h",
       "Source/SQLiteDB.cpp",
-      "Source/SQLiteDB.h",
       "Source/SQLiteBackup.cpp",
-      "Source/SQLiteBackup.h",
-      "Source/SQLiteVFS.cpp",
-      "Source/SQLiteVFS.h"
+      "Source/SQLiteVFS.cpp"
     ]
   }
 }

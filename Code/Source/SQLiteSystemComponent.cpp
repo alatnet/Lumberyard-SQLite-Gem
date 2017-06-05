@@ -9,7 +9,10 @@ namespace SQLite {
 		if (AZ::SerializeContext* serialize = azrtti_cast<AZ::SerializeContext*>(context)) {
 			serialize->Class<SQLiteSystemComponent, AZ::Component>()
 				->Version(1)
-				->Field("DBPath", &SQLiteSystemComponent::m_dbPath);
+				->Field("Settings", &SQLiteSystemComponent::m_dbPath)
+				->Field("OpenType", &SQLiteSystemComponent::m_OpenType)
+				->Field("Openv2_flags", &SQLiteSystemComponent::m_openv2_flags)
+				->Field("Openv2_zvfs", &SQLiteSystemComponent::m_openv2_zvfs);
 			//->SerializerForEmptyClass();
 
 			if (AZ::EditContext* ec = serialize->GetEditContext()) {
@@ -18,29 +21,25 @@ namespace SQLite {
 					->Attribute(AZ::Edit::Attributes::Category, "Database")
 					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("System"))
 					->Attribute(AZ::Edit::Attributes::AutoExpand, true)
-					->DataElement(0, &SQLiteSystemComponent::m_dbPath, "Database", "Database Path");
+					->DataElement(0, &SQLiteSystemComponent::m_dbPath, "Database", "Database Path")
+					->DataElement(1, &SQLiteSystemComponent::m_OpenType, "Open Type", "Which open function to use.")
+					->DataElement(2, &SQLiteSystemComponent::m_openv2_flags, "Open V2 Flags", "Flags to use for Open V2.")
+					->DataElement(3, &SQLiteSystemComponent::m_openv2_zvfs, "Open V2 VFS", "Virtual filesystem to use for Open V2.");
 			}
 		}
 
 		AZ::BehaviorContext* behaviorContext = azrtti_cast<AZ::BehaviorContext*>(context);
 		if (behaviorContext) {
-		#define SQLITE_EVENT(name) ->Event(#name, &SQLiteRequestBus::Events::##name##)
-		#define SQLITE_EVENTLUA(name) ->Event(#name, &SQLiteRequestBus::Events::##name##Lua)
+			#define SQLITE_EVENT(name) ->Event(#name, &SQLiteRequestBus::Events::##name##)
+			#define SQLITE_EVENTLUA(name) ->Event(#name, &SQLiteRequestBus::Events::##name##Lua)
 			behaviorContext->EBus<SQLiteRequestBus>("SQLiteLY")
 				->Handler<LuaHandler>()
 				SQLITE_EVENTLUA(Exec)
 				SQLITE_EVENTLUA(ExecTo)
-				SQLITE_EVENTLUA(GetConnection)
-				SQLITE_EVENT(Open)
-				SQLITE_EVENT(Open16)
-				SQLITE_EVENT(Open_v2)
-				SQLITE_EVENT(ErrCode)
-				SQLITE_EVENT(ExtErrCode)
-				SQLITE_EVENT(ErrMsg)
-				SQLITE_EVENT(ErrMsg16)
+				SQLITE_EVENT(GetConnection)
 				;
-		#undef SQLITE_EVENTLUA
-		#undef SQLITE_EVENT
+			#undef SQLITE_EVENTLUA
+			#undef SQLITE_EVENT
 
 			//behaviorContext->EBus<SQLiteLuaRequests>("");
 		}
@@ -65,84 +64,34 @@ namespace SQLite {
 
 	void SQLiteSystemComponent::Init() {
 		this->m_dbPath = ":memory:";
-		this->m_OpenType = CLOSED;
+		this->m_OpenType = OPEN;
+		this->m_openv2_flags = 0;
+		this->m_openv2_zvfs = "";
+		this->m_pDB = new SQLite3::SQLiteDB();
 	}
 
 	void SQLiteSystemComponent::Activate() {
 		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
-		sqlite3_open(this->m_dbPath, &(this->m_pDB));
-		this->m_OpenType = OPEN;
+
+		switch (this->m_OpenType) {
+		case OPEN:
+			this->m_pDB->Open(this->m_dbPath);
+			break;
+		case OPEN16:
+			this->m_pDB->Open16(this->m_dbPath);
+			break;
+		case OPENV2:
+			this->m_pDB->Open_v2(this->m_dbPath, m_openv2_flags, m_openv2_zvfs);
+			break;
+		}
 		SQLiteRequestBus::Handler::BusConnect(this->GetEntityId());
 	}
 
 	void SQLiteSystemComponent::Deactivate() {
 		SQLiteRequestBus::Handler::BusDisconnect();
 		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
-		sqlite3_close(this->m_pDB);
-		this->m_OpenType = CLOSED;
-	}
-
-	int SQLiteSystemComponent::Open(const char * path) {
-		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
-		int ret;
-		switch (this->m_OpenType) {
-		case OPEN:
-		case OPEN16:
-			ret = sqlite3_close(this->m_pDB);
-			break;
-		case OPENV2:
-			ret = sqlite3_close_v2(this->m_pDB);
-			break;
-		}
-
-		if (ret != SQLITE_OK) return ret;
-
-		this->m_dbPath = path;
-		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
-		return sqlite3_open(path, &(this->m_pDB));
-		this->m_OpenType = OPEN;
-	}
-
-	int SQLiteSystemComponent::Open16(const char * path) {
-		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
-		int ret;
-		switch (this->m_OpenType) {
-		case OPEN:
-		case OPEN16:
-			ret = sqlite3_close(this->m_pDB);
-			break;
-		case OPENV2:
-			ret = sqlite3_close_v2(this->m_pDB);
-			break;
-		}
-
-		if (ret != SQLITE_OK) return ret;
-
-		this->m_dbPath = path;
-		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
-		return sqlite3_open16(path, &(this->m_pDB));
-		this->m_OpenType = OPEN16;
-	}
-
-	int SQLiteSystemComponent::Open_v2(const char * path, int flags, const char *zVfs) {
-		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
-		int ret;
-		switch (this->m_OpenType) {
-		case OPEN:
-		case OPEN16:
-			ret = sqlite3_close(this->m_pDB);
-			break;
-		case OPENV2:
-			ret = sqlite3_close_v2(this->m_pDB);
-			break;
-		}
-		this->m_dbPath = path;
-
-		if (ret != SQLITE_OK) return ret;
-
-		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
-		return sqlite3_open_v2(path, &(this->m_pDB), flags, zVfs);
-		this->m_OpenType = OPENV2;
+		this->m_pDB->Close();
+		delete this->m_pDB;
 	}
 	////////////////////////////////////////////////////////////////////////
 
@@ -179,8 +128,7 @@ namespace SQLite {
 
 		//char * errmsg = 0;
 
-		return sqlite3_exec(
-			this->m_pDB,
+		return this->m_pDB->Exec(
 			sql,
 			callback,
 			&args,
@@ -219,8 +167,7 @@ namespace SQLite {
 
 		//char * errmsg = 0;
 
-		return sqlite3_exec(
-			this->m_pDB,
+		return this->m_pDB->Exec(
 			sql,
 			callback,
 			&args,

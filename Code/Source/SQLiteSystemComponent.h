@@ -12,8 +12,6 @@
 
 #include <AzCore\RTTI\TypeInfo.h>
 
-#include "SQLiteDB.h"
-
 namespace SQLite
 {
 	class SQLiteLuaRequests : public AZ::EBusTraits {
@@ -45,26 +43,18 @@ namespace SQLite
     public:
         ////////////////////////////////////////////////////////////////////////
         // SQLiteRequestBus interface implementation
-		int Open(const char *path);
-		int Open16(const char * path);
-		int Open_v2(const char * path, int flags, const char *zVfs);
-
-		int Exec(const char *sql, int(*callback)(void*, int, char**, char**), void * cbarg, char **errmsg) { return sqlite3_exec(this->m_pDB, sql, callback, cbarg, errmsg); }
-
-		sqlite3 * GetConnection() { return this->m_pDB; }
-
-		int ErrCode() { return sqlite3_errcode(this->m_pDB); }
-		int ExtErrCode() { return sqlite3_extended_errcode(this->m_pDB); }
-		const char * ErrMsg() { return sqlite3_errmsg(this->m_pDB); }
-		const void * ErrMsg16() { return sqlite3_errmsg16(this->m_pDB); }
+		SQLite3::SQLiteDB * GetConnection() { return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); }
+		SQLite3::SQLiteDB * NewConnection() { return new SQLite3::SQLiteDB(); }
+		SQLite3::SQLiteBackup * NewBackup(SQLite3::SQLiteDB * dest, const char * dname, SQLite3::SQLiteDB * src, const char *sname) { return new SQLite3::SQLiteBackup(dest, dname, src, sname); }
+		SQLite3::SQLiteMutex * NewMutex(int N) { return new SQLite3::SQLiteMutex(N); }
+		SQLite3::SQLiteVFS * NewVFS(const char * vfsName) { return new SQLite3::SQLiteVFS(vfsName); }
+		SQLite3::SQLiteVFS * NewVFS(sqlite3_vfs * vfs) { return new SQLite3::SQLiteVFS(vfs); }
         ////////////////////////////////////////////////////////////////////////
 	protected:
 		////////////////////////////////////////////////////////////////////////
 		// Lua Interface Implementation
 		int ExecLua(const char *sql, void * cbarg);
 		int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg);
-
-		SQLite3::SQLiteDB * GetConnectionLua() { return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); }
 		////////////////////////////////////////////////////////////////////////
 	protected:
         ////////////////////////////////////////////////////////////////////////
@@ -73,17 +63,24 @@ namespace SQLite
         void Activate() override;
         void Deactivate() override;
         ////////////////////////////////////////////////////////////////////////
-	protected:
+	private:
 		const char * m_dbPath;
-		sqlite3 *m_pDB;
+	protected:
+		SQLite3::SQLiteDB *m_pDB;
 	private:
 		enum OpenType {
-			CLOSED,
 			OPEN,
 			OPEN16,
 			OPENV2
 		};
 		OpenType m_OpenType;
+		int m_openv2_flags;
+		char * m_openv2_zvfs;
+
+		/*struct {
+			const char * m_dbPath; //database path
+			bool m_lockConn; //lock the database connection (disable open/close)
+		} m_Settings;*/
 	protected:
 	public:
 		class LuaHandler : public SQLiteLuaBus::Handler, public AZ::BehaviorEBusHandler {
