@@ -21,7 +21,7 @@ Each EBus requires an address which is the pointer to the class that is going to
 Due to the way EBuses function, there is no current way to create a new pointer (i.e. new <class>).  
 To get around this, the System Entity can create new pointers using it\'s SQLiteBus EBus interface.  
 DO NOT under ANY circumstances use the Broadcast EBus function.  
-Use Event or EventResult instead to use a specific database\'s function and a class pointer as the address.
+Use Event or EventResult instead to use a specific database\'s function and a class pointer as the address.  
 NOTE! DO NOT call Close on a database connection that is associated with an entity.  
 The entity will automatically close it\'s database connection apon destruction.  
 Calling Close on an entity database connection will return a SQLITE_MISUSE error.  
