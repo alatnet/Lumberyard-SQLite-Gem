@@ -36,3 +36,13 @@ namespace SQLite
 	};
     using SQLiteRequestBus = AZ::EBus<SQLiteRequests>;
 } // namespace SQLite
+
+//quick and easy defines
+#define SQLITE_BUS(ret, var, func, ...) SQLite::SQLiteRequestBus::EventResult(##ret##,##var##, &SQLite::SQLiteRequestBus::Events::##func##,__VA_ARGS__)
+#define SQLITE3_BUS(ret, var, class_, func, ...) SQLite3::##class_##::EventResult(##ret##,##var##, &SQLite3::##class_##::Events::##func##,__VA_ARGS__)
+#define SQLITEDB_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteDBBus, func, __VA_ARGS__)
+#define SQLITESTMT_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteStmtBus, func, __VA_ARGS__)
+#define SQLITEVFS_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteVFSBus, func, __VA_ARGS__)
+#define SQLITEVALUE_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteValueBus, func, __VA_ARGS__)
+#define SQLITEMUTEX_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteMutexBus, func, __VA_ARGS__)
+#define SQLITEBACKUP_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteBackupBus, func, __VA_ARGS__)

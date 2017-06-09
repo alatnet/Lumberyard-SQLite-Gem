@@ -15,7 +15,8 @@ To overcome this, it is required that you add "__pragma(warning(disable : 4267))
 The C++ Syntax is generally the same as the C syntax but due to the way Lumberyard loads Components you will not be able to directly use the C++ classes themselves.  
 To use the C++ classes functions you have to go through EBuses.  
 Almost every function in the classes has an EBus equivalent.  
-Each EBus requires an address which is the pointer to the class that is going to have it\'s function called.
+Each EBus requires an address which is the pointer to the class that is going to have it\'s function called.  
+In addition, macros are available to make it easier to deal with the buses.
 
 ## Lumberyard Speciifc C++
 Due to the way EBuses function, there is no current way to create a new pointer (i.e. new <class>).  
@@ -35,7 +36,7 @@ SQLiteValue - SQLiteValueBus - SQLite/SQLiteValue.h - sqlite3_value \*
 SQLiteVFS - SQLiteVFSBus - SQLite/SQLiteVFS.h - sqlite3_vfs \*  
 SQLiteMutex - SQLiteMutexBus - SQLite/SQLiteMutex.h - sqlite3_mutex \*  
 
-## C++ Example
+## C++ Example Using Direct Bus Functions
 ```C++
 #include <SQLite/SQLiteBus.h>
 #include <SQLite\sqlite3.h>
@@ -123,6 +124,106 @@ int main(){
   
   //close the database connection
   SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQliteDBBus::Events::Close);
+  AZ_Assert(ret == SQLITE_OK, "Close Failed.");
+
+  //free up memory;
+  delete indDb;
+  ///////////////////////////////////////////////////
+
+  return 0;
+}
+```
+
+## C++ Example Using Bus Macros
+```C++
+#include <SQLite/SQLiteBus.h>
+#include <SQLite\sqlite3.h>
+
+int main(){
+  int ret;
+  //System Entity Database
+  ///////////////////////////////////////////////////
+  SQLite3::SQLiteDB * sysDb;
+  SQLITE_BUS(sysDb, AZ::EntityId(0), GetConnection); //Get the system entity database connection
+  AZ_Assert(sysDb, "sysDb is null.");
+
+  //create a table
+  SQLITEDB_BUS(ret, sysDb, Exec, "CREATE TABLE System (Col1 int, Col2 varchar(255));", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Create Table Failed.");
+
+  //insert a row
+  SQLITEDB_BUS(ret, sysDb, Exec, "INSERT INTO System (Col1, Col2) VALUES(0,'FIRST');", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
+
+  //insert a row
+  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(1,'SECOND');", nullptr, nullptr, nullptr);
+  SQLITEDB_BUS(ret, sysDb, Exec, "INSERT INTO System (Col1, Col2) VALUES(1,'SECOND');", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
+
+  //insert a row
+  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(2,'THIRD');", nullptr, nullptr, nullptr);
+  SQLITEDB_BUS(ret, sysDb, Exec, "INSERT INTO System (Col1, Col2) VALUES(2,'THIRD');", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
+  
+  //select all from the table
+  SQLITEDB_BUS(
+	ret,
+	sysDb,
+	Exec,
+	"SELECT * FROM System;",
+	[](void* cbarg, int argc, char **argv, char **azColName) -> int {
+		for (int i = 0; i < argc; i++) CryLog("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
+		return 0;
+	},
+	nullptr,
+	nullptr
+  );
+  AZ_Assert(ret == SQLITE_OK, "Select Failed");
+  ///////////////////////////////////////////////////
+
+  //Individual Database
+  ///////////////////////////////////////////////////
+  SQLite3::SQLiteDB * indDb;
+  SQLITE_BUS(indDb, AZ::EntityId(0), NewConnection); //create a new database connection (separate from entity)
+  AZ_Assert(indDb, "indDb is null.");
+
+  //open the database connection
+  SQLITEDB_BUS(ret, indDb, Open, ":memory:");
+  AZ_Assert(ret == SQLITE_OK, "Open Failed.");
+
+  //create a table
+  SQLITEDB_BUS(ret, indDb, Exec, "CREATE TABLE Individual (Col3 int, Col4 varchar(255));", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Create Table Failed.");
+
+  //insert a row
+  SQLITEDB_BUS(ret, indDb, Exec, "INSERT INTO Individual (Col3, Col4) VALUES(3,'FOURTH');", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
+
+  //insert a row
+  SQLITEDB_BUS(ret, indDb, Exec, "INSERT INTO Individual (Col3, Col4) VALUES(4,'FIFTH');", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
+
+  //insert a row
+  SQLITEDB_BUS(ret, indDb, Exec, "INSERT INTO Individual (Col3, Col4) VALUES(5,'SIXTH');", nullptr, nullptr, nullptr);
+  AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
+  
+  //select all from the table
+  SQLITEDB_BUS(
+    ret,
+    sysDb,
+    Exec,
+    "SELECT * FROM Individual;",
+    [](void* cbarg, int argc, char **argv, char **azColName) -> int {
+      for (int i = 0; i < argc; i++) CryLog("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
+      return 0;
+    },
+    nullptr,
+    nullptr
+  );
+  AZ_Assert(ret == SQLITE_OK, "Select Failed");
+  
+  //close the database connection
+  SQLITEDB_BUS(ret, indDb, Close);
   AZ_Assert(ret == SQLITE_OK, "Close Failed.");
 
   //free up memory;
