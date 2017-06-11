@@ -9,7 +9,7 @@ namespace SQLite {
 		if (AZ::SerializeContext* serialize = azrtti_cast<AZ::SerializeContext*>(context)) {
 			serialize->Class<SQLiteSystemComponent, AZ::Component>()
 				->Version(1)
-				->Field("Settings", &SQLiteSystemComponent::m_dbPath)
+				->Field("dbPath", &SQLiteSystemComponent::m_dbPath)
 				->Field("OpenType", &SQLiteSystemComponent::m_OpenType)
 				->Field("Openv2_flags", &SQLiteSystemComponent::m_openv2_flags)
 				->Field("Openv2_zvfs", &SQLiteSystemComponent::m_openv2_zvfs);
@@ -37,6 +37,7 @@ namespace SQLite {
 				SQLITE_EVENTLUA(Exec)
 				SQLITE_EVENTLUA(ExecTo)
 				SQLITE_EVENT(GetConnection)
+				SQLITE_EVENTLUA(GetSysConnection)
 				;
 			#undef SQLITE_EVENTLUA
 			#undef SQLITE_EVENT
@@ -192,4 +193,10 @@ namespace SQLite {
 		}
 	}*/
 	////////////////////////////////////////////////////////////////////////
+
+	SQLite3::SQLiteDB * SQLiteSystemComponent::GetSysConnectionLua() {
+		SQLite3::SQLiteDB * ret = nullptr;
+		SQLITE_BUS(ret, AZ::EntityId(0), GetConnection);
+		return ret;
+	}
 }

@@ -593,7 +593,13 @@ namespace SQLite3 {
 	}
 	////////////////////////////////////////////////////////////////////////
 
+
+	/*int SQLiteDB::Exec(const char *sql) { this->Exec(sql, nullptr, nullptr, nullptr); }
+	int SQLiteDB::Exec(const char *sql, char **errmsg) { this->Exec(sql, nullptr, nullptr, errmsg); }
+	int SQLiteDB::Exec(const char *sql, int(*callback)(void*, int, char**, char**)) { this->Exec(sql, callback, nullptr, nullptr); }
+	int SQLiteDB::Exec(const char *sql, int(*callback)(void*, int, char**, char**), char **errmsg) { this->Exec(sql, callback, nullptr, errmsg); }*/
 	int SQLiteDB::Exec(const char *sql, int(*callback)(void*, int, char**, char**), void *cbarg, char **errmsg) { return sqlite3_exec(this->m_pDB,sql, callback, cbarg, errmsg); }
+
 	int SQLiteDB::ErrCode() { return sqlite3_errcode(this->m_pDB); }
 	int SQLiteDB::ExtErrCode() { return sqlite3_extended_errcode(this->m_pDB); }
 	const char * SQLiteDB::ErrMsg() { return sqlite3_errmsg(this->m_pDB); }

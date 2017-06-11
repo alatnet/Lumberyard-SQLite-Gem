@@ -24,6 +24,10 @@ namespace SQLite3 {
 		virtual int Open_v2(const char * path, int flags, const char *zVfs) = 0;
 		virtual int Close() = 0;
 		//virtual int Close_v2() = 0;
+		/*virtual int Exec(const char *sql) = 0;
+		virtual int Exec(const char *sql, char **errmsg) = 0;
+		virtual int Exec(const char *sql, int(*callback)(void*, int, char**, char**)) = 0;
+		virtual int Exec(const char *sql, int(*callback)(void*, int, char**, char**), char **errmsg) = 0;*/
 		virtual int Exec(const char *sql, int(*callback)(void*, int, char**, char**), void *, char **errmsg) = 0;
 		virtual SQLiteStmt * Prepare(const char * sql, int nByte, const char **pzTail) = 0;
 		virtual SQLiteStmt * Prepare_v2(const char * sql, int nByte, const char **pzTail) = 0;
@@ -105,6 +109,10 @@ namespace SQLite3 {
 	private:
 		int Close2Open();
 	public: //not implemented in lua
+		/*int Exec(const char *sql);
+		int Exec(const char *sql, char **errmsg);
+		int Exec(const char *sql, int(*callback)(void*, int, char**, char**));
+		int Exec(const char *sql, int(*callback)(void*, int, char**, char**), char **errmsg);*/
 		int Exec(const char *sql, int(*callback)(void*, int, char**, char**), void *, char **errmsg);
 	public:
 		SQLiteStmt * Prepare(const char * sql, int nByte, const char **pzTail);

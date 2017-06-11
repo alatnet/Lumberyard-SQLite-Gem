@@ -56,6 +56,8 @@ namespace SQLite
 		int ExecLua(const char *sql, void * cbarg);
 		int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg);
 		////////////////////////////////////////////////////////////////////////
+
+		SQLite3::SQLiteDB * GetSysConnectionLua();
 	protected:
         ////////////////////////////////////////////////////////////////////////
         // AZ::Component interface implementation

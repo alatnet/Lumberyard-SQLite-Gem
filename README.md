@@ -343,6 +343,39 @@ function Example:OnActivate()
 		end
 		stmt:Finalize()
 	end
+
+	--test system entity database connection
+	Debug.Log("System DB Connection")
+	sqliteSysdb = SQLiteLY.Event.GetSysConnection(self.entityId)
+
+	Debug.Log("Type: " .. type(sqliteSysdb))
+
+	if sqliteSysdb ~= nil then
+		err, stmt, tail = sqliteSysdb:Prepare_v2("CREATE TABLE System (Col5 int, Col6 varchar(255));")
+		stmt:Step()
+		stmt:Finalize()
+		err, stmt, tail = sqliteSysdb:Prepare_v2("INSERT INTO System (Col5, Col6) VALUES(0,'FIRST');")
+		stmt:Step()
+		stmt:Finalize()
+		err, stmt, tail = sqliteSysdb:Prepare_v2("INSERT INTO System (Col5, Col6) VALUES(1,'SECOND');")
+		stmt:Step()
+		stmt:Finalize()
+		err, stmt, tail = sqliteSysdb:Prepare_v2("INSERT INTO System (Col5, Col6) VALUES(2,'THIRD');")
+		stmt:Step()
+		stmt:Finalize()
+
+		err, stmt, tail = sqliteSysdb:Prepare_v2("SELECT * FROM System;")
+		while stmt:Step() == SQLite.ROW do
+			first = stmt:Column_Int(0)
+			second = stmt:Column_Text(1)
+
+			firstCol = stmt:Column_Name(0)
+			secondCol = stmt:Column_Name(1)
+
+			Debug.Log(firstCol ..": " .. first .. " = " .. secondCol ..": " .. second)
+		end
+		stmt:Finalize()
+	end
 end
 
 function Example:OnDeactivate()
