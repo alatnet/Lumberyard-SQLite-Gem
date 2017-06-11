@@ -18,7 +18,7 @@ Almost every function in the classes has an EBus equivalent.
 Each EBus requires an address which is the pointer to the class that is going to have it\'s function called.  
 In addition, macros are available to make it easier to deal with the buses.
 
-## Lumberyard Speciifc C++
+## Lumberyard Specific C++
 Due to the way EBuses function, there is no current way to create a new pointer (i.e. new <class>).  
 To get around this, the System Entity can create new pointers using it\'s SQLiteBus EBus interface.  
 DO NOT under ANY circumstances use the Broadcast EBus function.  
