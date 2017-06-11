@@ -156,12 +156,10 @@ int main(){
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(1,'SECOND');", nullptr, nullptr, nullptr);
   SQLITEDB_BUS(ret, sysDb, Exec, "INSERT INTO System (Col1, Col2) VALUES(1,'SECOND');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(2,'THIRD');", nullptr, nullptr, nullptr);
   SQLITEDB_BUS(ret, sysDb, Exec, "INSERT INTO System (Col1, Col2) VALUES(2,'THIRD');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
   
