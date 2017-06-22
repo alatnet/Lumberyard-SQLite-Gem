@@ -4,6 +4,8 @@
 
 #include "SQLite\SQLiteStmt.h"
 
+#include "SQLite\SQLiteBus.h"
+
 namespace SQLite3 {
 	void SQLiteDB::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		////////////////////////////////////////////////////////////////////////
@@ -501,7 +503,7 @@ namespace SQLite3 {
 		this->m_pDB = db->m_pDB;
 		this->m_entityid = id;
 		SQLiteDBBus::Handler::BusConnect(this);
-		this->m_OpenType = CLOSED;
+		this->m_OpenType = db->m_OpenType;
 	}
 
 	SQLiteDB::~SQLiteDB() {
@@ -509,6 +511,14 @@ namespace SQLite3 {
 	}
 
 	int SQLiteDB::Open(const char * path) {
+		if (this->m_entityid.IsValid()) {
+			SQLiteDB * db;
+			SQLITE_BUS(db, this->m_entityid, GetConnection);
+			int ret = db->Open(path);
+			this->m_OpenType = db->m_OpenType;
+			return ret;
+		}
+
 		if (this->m_OpenType != CLOSED) {
 			int err = this->Close2Open();
 			if (err != SQLITE_OK) return err;
@@ -521,6 +531,14 @@ namespace SQLite3 {
 	}
 
 	int SQLiteDB::Open16(const char * path) {
+		if (this->m_entityid.IsValid()) {
+			SQLiteDB * db;
+			SQLITE_BUS(db, this->m_entityid, GetConnection);
+			int ret = db->Open16(path);
+			this->m_OpenType = db->m_OpenType;
+			return ret;
+		}
+
 		if (this->m_OpenType != CLOSED) {
 			int err = this->Close2Open();
 			if (err != SQLITE_OK) return err;
@@ -533,6 +551,14 @@ namespace SQLite3 {
 	}
 
 	int SQLiteDB::Open_v2(const char * path, int flags, const char *zVfs) {
+		if (this->m_entityid.IsValid()) {
+			SQLiteDB * db;
+			SQLITE_BUS(db, this->m_entityid, GetConnection);
+			int ret = db->Open_v2(path, flags, zVfs);
+			this->m_OpenType = db->m_OpenType;
+			return ret;
+		}
+
 		if (this->m_OpenType != CLOSED) {
 			int err = this->Close2Open();
 			if (err != SQLITE_OK) return err;
