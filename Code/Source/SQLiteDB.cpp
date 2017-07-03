@@ -508,6 +508,7 @@ namespace SQLite3 {
 
 	SQLiteDB::~SQLiteDB() {
 		SQLiteDBBus::Handler::BusDisconnect();
+		this->Close();
 	}
 
 	int SQLiteDB::Open(const char * path) {
