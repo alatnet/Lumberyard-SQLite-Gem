@@ -37,7 +37,7 @@ namespace SQLite {
 					->DataElement(0, &SQLiteSystemComponent::m_openv2_flags, "Open V2 Flags", "Flags to use for Open V2.")
 						->Attribute(AZ::Edit::Attributes::Visibility, &SQLiteSystemComponent::IsOpenTypeV2)
 					->DataElement(0, &SQLiteSystemComponent::m_openv2_zvfs, "Open V2 VFS", "Virtual filesystem to use for Open V2.")
-						->Attribute(AZ::Edit::Attributes::Visibility, &SQLiteSystemComponent::IsOpenTypeV2)
+						->Attribute(AZ::Edit::Attributes::Visibility, &SQLiteSystemComponent::IsOpenTypeV2);
 			}
 		}
 
