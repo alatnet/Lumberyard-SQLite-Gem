@@ -538,6 +538,7 @@ namespace SQLite3 {
 
 		if (gEnv) {
 			if (sPath.compare(":memory:") == 0 || sPath.find("file:") != AZStd::string::npos) return sqlite3_open(path, &this->m_pDB);
+			else if (sPath.size() == 0) return sqlite3_open("", &this->m_pDB);
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
@@ -576,6 +577,7 @@ namespace SQLite3 {
 
 		if (gEnv) {
 			if (sPath.compare(":memory:") == 0 || sPath.find("file:") != AZStd::string::npos) return sqlite3_open16(path, &this->m_pDB);
+			else if (sPath.size() == 0) return sqlite3_open("", &this->m_pDB);
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
@@ -614,6 +616,7 @@ namespace SQLite3 {
 
 		if (gEnv) {
 			if (sPath.compare(":memory:") == 0 || sPath.find("file:") != AZStd::string::npos) return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+			else if (sPath.size() == 0) return sqlite3_open("", &this->m_pDB);
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
