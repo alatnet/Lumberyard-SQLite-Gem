@@ -242,7 +242,7 @@ Constants and Enums are provided with variation.  SQLITE_*name* becomes SQLite.*
 ## Lumberyard Specific Lua
 The lua for lumberyard is the same as the regular lua syntax.  
 Entities that use the SQLiteSystemComponent, such as the system entity, will have a function to retrieve the current database connection that is associated with it.  
-To retrieve the database in the entity you use SQLiteLY.Event.GetConnection().  
+To retrieve the database in the entity you use SQLiteBus.Event.GetConnection().  
 Afterwards, any and all lua database functions will work with the sqlite database object.  
 NOTE! DO NOT call Close on a database connection that is associated with an entity.  
 The entity will automatically close it\'s database connection apon destruction.  
@@ -313,7 +313,7 @@ function Example:OnActivate()
 
 	--test entity database connection
 	Debug.Log("Entity DB Connection")
-	sqliteEntdb = SQLiteLY.Event.GetConnection(self.entityId)
+	sqliteEntdb = SQLiteBus.Event.GetConnection(self.entityId)
 
 	Debug.Log("Type: " .. type(sqliteEntdb))
 
@@ -346,7 +346,7 @@ function Example:OnActivate()
 
 	--test system entity database connection
 	Debug.Log("System DB Connection")
-	sqliteSysdb = SQLiteLY.Event.GetSysConnection(self.entityId)
+	sqliteSysdb = SQLiteLY.GetSysConnection(self.entityId)
 
 	Debug.Log("Type: " .. type(sqliteSysdb))
 

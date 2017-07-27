@@ -5,6 +5,13 @@
 namespace SQLite {
 	////////////////////////////////////////////////////////////////////////
 	// Component Implementation
+	SQLiteSystemComponent::SQLiteSystemComponent() {
+		this->m_dbPath = ":memory:";
+		this->m_OpenType = OPEN;
+		this->m_openv2_flags = 0;
+		this->m_openv2_zvfs = "";
+	}
+
 	void SQLiteSystemComponent::Reflect(AZ::ReflectContext* context) {
 		if (AZ::SerializeContext* serialize = azrtti_cast<AZ::SerializeContext*>(context)) {
 			serialize->Class<SQLiteSystemComponent, AZ::Component>()
@@ -13,18 +20,24 @@ namespace SQLite {
 				->Field("OpenType", &SQLiteSystemComponent::m_OpenType)
 				->Field("Openv2_flags", &SQLiteSystemComponent::m_openv2_flags)
 				->Field("Openv2_zvfs", &SQLiteSystemComponent::m_openv2_zvfs);
-			//->SerializerForEmptyClass();
 
 			if (AZ::EditContext* ec = serialize->GetEditContext()) {
-				ec->Class<SQLiteSystemComponent>("SQLiteLY", "SQLite database component.")
+				ec->Class<SQLiteSystemComponent>("SQLite", "SQLite database component.")
 					->ClassElement(AZ::Edit::ClassElements::EditorData, "")
 					->Attribute(AZ::Edit::Attributes::Category, "Database")
+					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("Game"))
 					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("System"))
 					->Attribute(AZ::Edit::Attributes::AutoExpand, true)
 					->DataElement(0, &SQLiteSystemComponent::m_dbPath, "Database", "Database Path")
-					->DataElement(1, &SQLiteSystemComponent::m_OpenType, "Open Type", "Which open function to use.")
-					->DataElement(2, &SQLiteSystemComponent::m_openv2_flags, "Open V2 Flags", "Flags to use for Open V2.")
-					->DataElement(3, &SQLiteSystemComponent::m_openv2_zvfs, "Open V2 VFS", "Virtual filesystem to use for Open V2.");
+					->DataElement(AZ::Edit::UIHandlers::ComboBox, &SQLiteSystemComponent::m_OpenType, "Open Type", "Which open function to use.")
+						->EnumAttribute(OpenType::OPEN, "Open")
+						->EnumAttribute(OpenType::OPEN16, "Open16")
+						->EnumAttribute(OpenType::OPENV2, "Openv2")
+					->Attribute(AZ::Edit::Attributes::ChangeNotify, AZ::Edit::PropertyRefreshLevels::EntireTree)
+					->DataElement(0, &SQLiteSystemComponent::m_openv2_flags, "Open V2 Flags", "Flags to use for Open V2.")
+						->Attribute(AZ::Edit::Attributes::Visibility, &SQLiteSystemComponent::IsOpenTypeV2)
+					->DataElement(0, &SQLiteSystemComponent::m_openv2_zvfs, "Open V2 VFS", "Virtual filesystem to use for Open V2.")
+						->Attribute(AZ::Edit::Attributes::Visibility, &SQLiteSystemComponent::IsOpenTypeV2)
 			}
 		}
 
@@ -32,13 +45,15 @@ namespace SQLite {
 		if (behaviorContext) {
 			#define SQLITE_EVENT(name) ->Event(#name, &SQLiteRequestBus::Events::##name##)
 			#define SQLITE_EVENTLUA(name) ->Event(#name, &SQLiteRequestBus::Events::##name##Lua)
-			behaviorContext->EBus<SQLiteRequestBus>("SQLiteLY")
+			behaviorContext->EBus<SQLiteRequestBus>("SQLiteBus")
 				->Handler<LuaHandler>()
 				SQLITE_EVENTLUA(Exec)
 				SQLITE_EVENTLUA(ExecTo)
 				SQLITE_EVENT(GetConnection)
-				SQLITE_EVENTLUA(GetSysConnection)
+				//SQLITE_EVENTLUA(GetSysConnection)
 				;
+			behaviorContext->Class<SQLiteSystemComponent>("SQLiteLY")
+				->Method("GetSysConnection", &SQLiteSystemComponent::GetSysConnectionLua, nullptr, "");
 			#undef SQLITE_EVENTLUA
 			#undef SQLITE_EVENT
 
@@ -59,30 +74,26 @@ namespace SQLite {
 	}
 
 	void SQLiteSystemComponent::GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent) {
-		//(void)dependent;
-		dependent.push_back(AZ_CRC("SQLite3Service"));
+		(void)dependent;
+		//dependent.push_back(AZ_CRC("SQLite3Service"));
 	}
 
 	void SQLiteSystemComponent::Init() {
-		this->m_dbPath = ":memory:";
-		this->m_OpenType = OPEN;
-		this->m_openv2_flags = 0;
-		this->m_openv2_zvfs = "";
 		this->m_pDB = new SQLite3::SQLiteDB();
 	}
 
 	void SQLiteSystemComponent::Activate() {
-		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath);
+		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
 
 		switch (this->m_OpenType) {
 		case OPEN:
-			this->m_pDB->Open(this->m_dbPath);
+			this->m_pDB->Open(this->m_dbPath.c_str());
 			break;
 		case OPEN16:
-			this->m_pDB->Open16(this->m_dbPath);
+			this->m_pDB->Open16(this->m_dbPath.c_str());
 			break;
 		case OPENV2:
-			this->m_pDB->Open_v2(this->m_dbPath, m_openv2_flags, m_openv2_zvfs);
+			this->m_pDB->Open_v2(this->m_dbPath.c_str(), m_openv2_flags, m_openv2_zvfs.c_str());
 			break;
 		}
 		SQLiteRequestBus::Handler::BusConnect(this->GetEntityId());
@@ -95,6 +106,13 @@ namespace SQLite {
 		delete this->m_pDB;
 	}
 	////////////////////////////////////////////////////////////////////////
+
+	SQLite3::SQLiteDB * SQLiteSystemComponent::GetConnection() {
+		if (this->GetEntityId() == this->m_pDB->m_entityid) return this->m_pDB;
+		if (this->GetEntityId() == AZ::EntityId(0)) return this->m_pDB;
+		if (this->m_pDB) return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); //creates an alias to an entity's db?
+		return nullptr;
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	// Lua Implementation

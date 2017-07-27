@@ -15,7 +15,7 @@ namespace SQLite3 {
 
 			const char * sql;
 			int nByte;
-			const char *pzTail;
+			const char *pzTail = nullptr;
 
 			int numArgs = dc.GetNumArguments();
 
@@ -38,7 +38,8 @@ namespace SQLite3 {
 			if (numArgs == 1 || numArgs == 2) {
 				dc.PushResult(stmt->m_err);
 				dc.PushResult(stmt);
-				dc.PushResult(pzTail);
+				if (pzTail) dc.PushResult(pzTail);
+				else dc.PushResult(NULL);
 			} else {
 				delete stmt;
 			}
@@ -48,7 +49,7 @@ namespace SQLite3 {
 
 			const char * sql;
 			int nByte;
-			const char *pzTail;
+			const char *pzTail = nullptr;
 
 			int numArgs = dc.GetNumArguments();
 
@@ -71,7 +72,8 @@ namespace SQLite3 {
 			if (numArgs == 1 || numArgs == 2) {
 				dc.PushResult(stmt->m_err);
 				dc.PushResult(stmt);
-				dc.PushResult(pzTail);
+				if (pzTail) dc.PushResult(pzTail);
+				else dc.PushResult(NULL);
 			} else {
 				delete stmt;
 			}

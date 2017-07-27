@@ -10,13 +10,13 @@ namespace SQLite3 {
 			serialize->Class<SQLiteComponent, AZ::Component>()
 				->SerializerForEmptyClass();
 
-			if (AZ::EditContext* ec = serialize->GetEditContext()) {
+			/*if (AZ::EditContext* ec = serialize->GetEditContext()) {
 				ec->Class<SQLiteComponent>("SQLite3", "SQLite Lua database component.")
 					->ClassElement(AZ::Edit::ClassElements::EditorData, "")
 					->Attribute(AZ::Edit::Attributes::Category, "Database")
 					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("System"))
 					->Attribute(AZ::Edit::Attributes::AutoExpand, true);
-			}
+			}*/
 		}
 
 		AZ::BehaviorContext* behaviorContext = azrtti_cast<AZ::BehaviorContext*>(context);
@@ -46,7 +46,8 @@ namespace SQLite3 {
 	}
 
 	void SQLiteComponent::GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent) {
-		(void)dependent;
+		//(void)dependent;
+		dependent.push_back(AZ_CRC("SQLiteLYService"));
 	}
 
 	void SQLiteComponent::Init() {

@@ -6,6 +6,8 @@
 
 #include "SQLite\SQLiteBus.h"
 
+#include <AzCore\IO\SystemFile.h>
+
 namespace SQLite3 {
 	void SQLiteDB::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		////////////////////////////////////////////////////////////////////////
@@ -515,9 +517,12 @@ namespace SQLite3 {
 		if (this->m_entityid.IsValid()) {
 			SQLiteDB * db;
 			SQLITE_BUS(db, this->m_entityid, GetConnection);
-			int ret = db->Open(path);
-			this->m_OpenType = db->m_OpenType;
-			return ret;
+			
+			if (db != nullptr) {
+				int ret = db->Open(path);
+				this->m_OpenType = db->m_OpenType;
+				return ret;
+			}
 		}
 
 		if (this->m_OpenType != CLOSED) {
@@ -528,16 +533,34 @@ namespace SQLite3 {
 		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		if (path == nullptr) path = ":memory:";
 		this->m_OpenType = OPEN;
-		return sqlite3_open(path, &this->m_pDB);
+
+		AZStd::string sPath = path;
+
+		if (gEnv) {
+			if (sPath.compare(":memory:") == 0 || sPath.find("file:") != AZStd::string::npos) return sqlite3_open(path, &this->m_pDB);
+			else {
+				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
+				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
+				AZ_Printf("SQLite3", "Resolved DB Path - %s", resolvedPath);
+				int ret = sqlite3_open(resolvedPath, &this->m_pDB);
+				delete resolvedPath;
+				return ret;
+			}
+		} else {
+			return sqlite3_open(path, &this->m_pDB);
+		}
 	}
 
 	int SQLiteDB::Open16(const char * path) {
 		if (this->m_entityid.IsValid()) {
 			SQLiteDB * db;
 			SQLITE_BUS(db, this->m_entityid, GetConnection);
-			int ret = db->Open16(path);
-			this->m_OpenType = db->m_OpenType;
-			return ret;
+
+			if (db != nullptr) {
+				int ret = db->Open16(path);
+				this->m_OpenType = db->m_OpenType;
+				return ret;
+			}
 		}
 
 		if (this->m_OpenType != CLOSED) {
@@ -548,16 +571,34 @@ namespace SQLite3 {
 		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		if (path == nullptr) path = ":memory:";
 		this->m_OpenType = OPEN16;
-		return sqlite3_open16(path, &this->m_pDB);
+
+		AZStd::string sPath = path;
+
+		if (gEnv) {
+			if (sPath.compare(":memory:") == 0 || sPath.find("file:") != AZStd::string::npos) return sqlite3_open16(path, &this->m_pDB);
+			else {
+				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
+				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
+				AZ_Printf("SQLite3", "Resolved DB Path - %s", resolvedPath);
+				int ret = sqlite3_open16(resolvedPath, &this->m_pDB);
+				delete resolvedPath;
+				return ret;
+			}
+		} else {
+			return sqlite3_open16(path, &this->m_pDB);
+		}
 	}
 
 	int SQLiteDB::Open_v2(const char * path, int flags, const char *zVfs) {
 		if (this->m_entityid.IsValid()) {
 			SQLiteDB * db;
 			SQLITE_BUS(db, this->m_entityid, GetConnection);
-			int ret = db->Open_v2(path, flags, zVfs);
-			this->m_OpenType = db->m_OpenType;
-			return ret;
+
+			if (db != nullptr) {
+				int ret = db->Open_v2(path, flags, zVfs);
+				this->m_OpenType = db->m_OpenType;
+				return ret;
+			}
 		}
 
 		if (this->m_OpenType != CLOSED) {
@@ -568,7 +609,22 @@ namespace SQLite3 {
 		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		if (path == nullptr) path = ":memory:";
 		this->m_OpenType = OPENV2;
-		return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+
+		AZStd::string sPath = path;
+
+		if (gEnv) {
+			if (sPath.compare(":memory:") == 0 || sPath.find("file:") != AZStd::string::npos) return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+			else {
+				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
+				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
+				AZ_Printf("SQLite3", "Resolved DB Path - %s", resolvedPath);
+				int ret = sqlite3_open_v2(resolvedPath, &this->m_pDB, flags, zVfs);
+				delete resolvedPath;
+				return ret;
+			}
+		} else {
+			return sqlite3_open_v2(path, &this->m_pDB, flags, zVfs);
+		}
 	}
 
 	//visible close
@@ -586,10 +642,10 @@ namespace SQLite3 {
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:
-			return sqlite3_close(this->m_pDB);
+			if (this->m_pDB) return sqlite3_close(this->m_pDB);
 			break;
 		case OPENV2:
-			return sqlite3_close_v2(this->m_pDB);
+			if (this->m_pDB) return sqlite3_close_v2(this->m_pDB);
 			break;
 		}
 		return SQLITE_OK;

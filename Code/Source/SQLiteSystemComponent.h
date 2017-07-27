@@ -31,6 +31,8 @@ namespace SQLite
         , protected SQLiteRequestBus::Handler
 		//, public AZ::BehaviorEBusHandler
     {
+	public:
+		SQLiteSystemComponent();
     public:
         AZ_COMPONENT(SQLiteSystemComponent, "{0758FD42-2B80-44E9-A0F9-0DDECC7B99B7}");
 
@@ -43,7 +45,7 @@ namespace SQLite
     public:
         ////////////////////////////////////////////////////////////////////////
         // SQLiteRequestBus interface implementation
-		SQLite3::SQLiteDB * GetConnection() { return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); }
+		SQLite3::SQLiteDB * GetConnection();/* { return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); }*/
 		SQLite3::SQLiteDB * NewConnection() { return new SQLite3::SQLiteDB(); }
 		SQLite3::SQLiteBackup * NewBackup(SQLite3::SQLiteDB * dest, const char * dname, SQLite3::SQLiteDB * src, const char *sname) { return new SQLite3::SQLiteBackup(dest, dname, src, sname); }
 		SQLite3::SQLiteMutex * NewMutex(int N) { return new SQLite3::SQLiteMutex(N); }
@@ -57,7 +59,7 @@ namespace SQLite
 		int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg);
 		////////////////////////////////////////////////////////////////////////
 
-		SQLite3::SQLiteDB * GetSysConnectionLua();
+		static SQLite3::SQLiteDB * GetSysConnectionLua();
 	protected:
         ////////////////////////////////////////////////////////////////////////
         // AZ::Component interface implementation
@@ -65,8 +67,10 @@ namespace SQLite
         void Activate() override;
         void Deactivate() override;
         ////////////////////////////////////////////////////////////////////////
+	protected:
+		bool IsOpenTypeV2() { return this->m_OpenType == SQLiteSystemComponent::OpenType::OPENV2; }
 	private:
-		const char * m_dbPath;
+		AZStd::string m_dbPath;
 	protected:
 		SQLite3::SQLiteDB *m_pDB;
 	private:
@@ -77,7 +81,7 @@ namespace SQLite
 		};
 		OpenType m_OpenType;
 		int m_openv2_flags;
-		char * m_openv2_zvfs;
+		AZStd::string m_openv2_zvfs;
 
 		/*struct {
 			const char * m_dbPath; //database path

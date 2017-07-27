@@ -33,7 +33,6 @@ namespace SQLite
 	protected: //Lua specific functions. Not exposed for usage in regular C++.
 		virtual int ExecLua(const char *sql, void * cbarg) = 0;
 		virtual int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg) = 0;
-		virtual SQLite3::SQLiteDB * GetSysConnectionLua() = 0;
 	};
     using SQLiteRequestBus = AZ::EBus<SQLiteRequests>;
 } // namespace SQLite

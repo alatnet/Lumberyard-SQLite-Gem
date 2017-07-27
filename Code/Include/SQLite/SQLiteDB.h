@@ -187,9 +187,9 @@ namespace SQLite3 {
 		sqlite3 *m_pDB;
 	public:
 		static void RegisterBehaviorContext(AZ::BehaviorContext* bc);
-	private:
+	public:
 		AZ::EntityId m_entityid;
-
+	private:
 		enum OpenType {
 			CLOSED,
 			OPEN,
