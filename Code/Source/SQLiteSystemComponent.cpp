@@ -33,7 +33,7 @@ namespace SQLite {
 						->EnumAttribute(OpenType::OPEN, "Open")
 						->EnumAttribute(OpenType::OPEN16, "Open16")
 						->EnumAttribute(OpenType::OPENV2, "Openv2")
-					->Attribute(AZ::Edit::Attributes::ChangeNotify, AZ::Edit::PropertyRefreshLevels::EntireTree)
+						->Attribute(AZ::Edit::Attributes::ChangeNotify, AZ::Edit::PropertyRefreshLevels::EntireTree)
 					->DataElement(0, &SQLiteSystemComponent::m_openv2_flags, "Open V2 Flags", "Flags to use for Open V2.")
 						->Attribute(AZ::Edit::Attributes::Visibility, &SQLiteSystemComponent::IsOpenTypeV2)
 					->DataElement(0, &SQLiteSystemComponent::m_openv2_zvfs, "Open V2 VFS", "Virtual filesystem to use for Open V2.")

@@ -530,8 +530,8 @@ namespace SQLite3 {
 			if (err != SQLITE_OK) return err;
 		}
 
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		if (path == nullptr) path = ":memory:";
+		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		this->m_OpenType = OPEN;
 
 		AZStd::string sPath = path;
@@ -569,8 +569,8 @@ namespace SQLite3 {
 			if (err != SQLITE_OK) return err;
 		}
 
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		if (path == nullptr) path = ":memory:";
+		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		this->m_OpenType = OPEN16;
 
 		AZStd::string sPath = path;
@@ -608,8 +608,8 @@ namespace SQLite3 {
 			if (err != SQLITE_OK) return err;
 		}
 
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		if (path == nullptr) path = ":memory:";
+		AZ_Printf("SQLite3", "Opening Database - %s", path);
 		this->m_OpenType = OPENV2;
 
 		AZStd::string sPath = path;

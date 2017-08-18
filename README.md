@@ -346,7 +346,7 @@ function Example:OnActivate()
 
 	--test system entity database connection
 	Debug.Log("System DB Connection")
-	sqliteSysdb = SQLiteLY.GetSysConnection(self.entityId)
+	sqliteSysdb = SQLiteLY.GetSysConnection()
 
 	Debug.Log("Type: " .. type(sqliteSysdb))
 
