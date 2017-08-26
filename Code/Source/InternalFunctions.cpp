@@ -171,7 +171,15 @@ namespace SQLite3 {
 				dc.ReadArg(0, zFile);
 				dc.ReadArg(1, zProc);
 
-				int ret = sqlite3_load_extension(thisPtr->m_pDB, zFile, zProc, &pzErrMsg);
+				int ret = SQLITE_ERROR;
+
+				if (gEnv) {
+					char * resolvedFile = new char[AZ_MAX_PATH_LEN];
+					gEnv->pFileIO->ResolvePath(zFile, resolvedFile, AZ_MAX_PATH_LEN);
+					ret = sqlite3_load_extension(thisPtr->m_pDB, resolvedFile, zProc, &pzErrMsg);
+					delete resolvedFile;
+				} else
+					ret = sqlite3_load_extension(thisPtr->m_pDB, zFile, zProc, &pzErrMsg);
 
 				dc.PushResult(ret);
 				dc.PushResult(pzErrMsg);

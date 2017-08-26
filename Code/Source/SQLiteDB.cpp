@@ -705,7 +705,19 @@ namespace SQLite3 {
 	int SQLiteDB::Get_AutoCommit() { return sqlite3_get_autocommit(this->m_pDB); }
 	void SQLiteDB::Interrupt() { sqlite3_interrupt(this->m_pDB); }
 	__int64 SQLiteDB::Last_Insert_RowId() { return (__int64)sqlite3_last_insert_rowid(this->m_pDB); }
-	int SQLiteDB::Load_Extension(const char * zFile, const char * zProc, char ** pzErrMsg) { return sqlite3_load_extension(this->m_pDB, zFile, zProc, pzErrMsg); }; //override
+	int SQLiteDB::Load_Extension(const char * zFile, const char * zProc, char ** pzErrMsg) { //override
+		int ret = SQLITE_ERROR;
+
+		if (gEnv) {
+			char * resolvedFile = new char[AZ_MAX_PATH_LEN];
+			gEnv->pFileIO->ResolvePath(zFile, resolvedFile, AZ_MAX_PATH_LEN);
+			ret = sqlite3_load_extension(this->m_pDB, resolvedFile, zProc, pzErrMsg);
+			delete resolvedFile;
+		} else
+			ret = sqlite3_load_extension(this->m_pDB, zFile, zProc, pzErrMsg);
+
+		return ret;
+	};
 	int SQLiteDB::Overload_Function(const char * zFuncName, int nArgs) { return sqlite3_overload_function(this->m_pDB, zFuncName, nArgs); }
 	void SQLiteDB::Set_Last_Insert_RowId(__int64 N) { sqlite3_set_last_insert_rowid(this->m_pDB, N); }
 	int SQLiteDB::System_ErrNo() { return sqlite3_system_errno(this->m_pDB); }
