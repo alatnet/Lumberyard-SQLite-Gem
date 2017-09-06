@@ -4,10 +4,10 @@
 #include <AzCore/RTTI/BehaviorContext.h>
 
 #include "SQLiteValue.h"
-#include "InternalFunctions.h"
 
 namespace SQLite3 {
 	class SQLiteStmt;
+	class SQLiteDB;
 
 	class SQLiteStmtRequests : public AZ::EBusTraits {
 	public:

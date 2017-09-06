@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "SQLite\SQLiteStmt.h"
 #include "SQLite\SQLiteDB.h"
+#include "InternalFunctions.h"
 
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////

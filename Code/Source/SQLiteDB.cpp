@@ -744,5 +744,4 @@ namespace SQLite3 {
 	int SQLiteDB::Status(int op, int *pCurrent, int *pHighwater, int resetFlag) { return sqlite3_status(op, pCurrent, pHighwater, resetFlag); }
 	int SQLiteDB::Complete(const char *zSql) { return sqlite3_complete(zSql); }
 	int SQLiteDB::Complete16(const void *zSql) { return sqlite3_complete16(zSql); }
-
 }
