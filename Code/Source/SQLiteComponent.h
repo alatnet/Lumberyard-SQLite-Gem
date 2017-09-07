@@ -10,7 +10,7 @@
 
 #include <AzCore\RTTI\TypeInfo.h>
 
-#include "SQLite\SQLiteClasses.h"
+#include "SQLiteClasses.h"
 #include "InternalFunctions.h"
 
 namespace SQLite3 {

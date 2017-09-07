@@ -4,7 +4,10 @@
 #include <AzCore/EBus/EBus.h>
 #include <SQLite\sqlite3.h>
 #include <SQLite\SQLiteDB.h>
+#include <SQLite\SQLiteMutex.h>
+#include <SQLite\SQLiteStmt.h>
 #include <SQLite\SQLiteBackup.h>
+#include <SQLite\SQLiteValue.h>
 #include <SQLite\SQLiteVFS.h>
 
 namespace SQLite

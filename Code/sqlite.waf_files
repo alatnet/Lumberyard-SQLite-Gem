@@ -21,7 +21,6 @@
       "Source/sqlite3.c"
     ],
     "Include/Classes": [
-      "Include/SQLite/SQLiteClasses.h",
       "Include/SQLite/SQLiteValue.h",
       "Include/SQLite/SQLiteMutex.h",
       "Include/SQLite/SQLiteStmt.h",
@@ -30,6 +29,7 @@
       "Include/SQLite/SQLiteVFS.h"
     ],
     "Source/Classes": [
+      "Source/SQLiteClasses.h",
       "Source/SQLiteValue.cpp",
       "Source/SQLiteMutex.cpp",
       "Source/SQLiteStmt.cpp",
