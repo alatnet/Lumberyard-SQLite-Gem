@@ -19,6 +19,7 @@ namespace SQLite3 {
 		virtual int Step() = 0;
 		virtual int Finalize() = 0;
 		virtual int Reset() = 0;
+		//------------------
 		virtual const void * Column_Blob(int iCol) = 0;
 		virtual int Column_Bytes(int iCol) = 0;
 		virtual int Column_Bytes16(int iCol) = 0;
@@ -32,6 +33,7 @@ namespace SQLite3 {
 		virtual const char *Column_Name(int N) = 0;
 		virtual const void *Column_Name16(int N) = 0;
 		virtual int Column_Count() = 0;
+		//------------------
 		#ifdef SQLITE_ENABLE_COLUMN_METADATA
 		virtual const char * Column_Database_Name(int N) = 0;
 		virtual const void * Column_Database_Name16(int N) = 0;
@@ -40,6 +42,7 @@ namespace SQLite3 {
 		virtual const char * Column_Database_Origin_Name(int N) = 0;
 		virtual const void * Column_Database_Origin_Name16(int N) = 0;
 		#endif
+		//------------------
 		virtual int Data_Count() = 0;
 		virtual SQLiteDB *DB_Handle() = 0;
 		virtual const char *SQL() = 0;
@@ -47,11 +50,30 @@ namespace SQLite3 {
 		virtual SQLiteStmt * Next_Stmt(SQLiteDB * db) = 0;
 		virtual int Busy() = 0;
 		virtual int ReadOnly() = 0;
+		//------------------
 		#ifdef SQLITE_ENABLE_STMT_SCANSTATUS
 		virtual int ScanStatus(int idx, int iScanStatusOp, void *pOut) = 0;
 		virtual void ScanStatus_Reset() = 0;
 		virtual int Status(int op, int resetFlg) = 0;
 		#endif
+		//------------------
+		virtual int Bind_Blob(int index, const void* val, int length, void(*deconstructor)(void*)) = 0; //fifth arg SQLITE_STATIC
+		virtual int Bind_Blob64(int index, const void* val, unsigned __int64 length, void(*deconstructor)(void*)) = 0; //fifth arg SQLITE_STATIC
+		virtual int Bind_Double(int index, double val) = 0;
+		virtual int Bind_Int(int index, int val) = 0;
+		virtual int Bind_Int64(int index, __int64 val) = 0;
+		virtual int Bind_Null(int index) = 0;
+		virtual int Bind_Text(int index, const char* val, int length, void(*deconstructor)(void*)) = 0; //fifth arg SQLITE_STATIC //lua overrider
+		virtual int Bind_Text16(int index, const void* val, int length, void(*deconstructor)(void*)) = 0; //fifth arg SQLITE_STATIC //lua overrider
+		virtual int Bind_Text64(int index, const char* val, unsigned __int64 length, void(*deconstructor)(void*), unsigned char encoding) = 0; //fifth arg SQLITE_STATIC //6th - SQLITE_UTF8, SQLITE_UTF16, SQLITE_UTF16BE, or SQLITE_UTF16LE //lua overrider
+		virtual int Bind_Value(int index, const SQLiteValue* val) = 0;
+		//virtual int Bind_Pointer(int index, void* val, const char* type, void(*deconstructor)(void*)) = 0; //fifth arg SQLITE_STATIC
+		virtual int Bind_ZeroBlob(int index, int length) = 0;
+		virtual int Bind_ZeroBlob64(int index, unsigned __int64 length) = 0;
+		virtual int Bind_Parameter_Index(const char *zName) = 0;
+		virtual int Bind_Parameter_Count() = 0;
+		virtual const char * Bind_Parameter_Name(int index) = 0;
+		//------------------
 	};
 
 	using SQLiteStmtBus = AZ::EBus<SQLiteStmtRequests>;
@@ -119,6 +141,23 @@ namespace SQLite3 {
 		void ScanStatus_Reset();
 		int Status(int op, int resetFlg);
 		#endif
+	public:
+		int Bind_Blob(int index, const void* val, int length, void(*deconstructor)(void*)); //fifth arg SQLITE_STATIC
+		int Bind_Blob64(int index, const void* val, unsigned __int64 length, void(*deconstructor)(void*)); //fifth arg SQLITE_STATIC
+		int Bind_Double(int index, double val);
+		int Bind_Int(int index, int val);
+		int Bind_Int64(int index, __int64 val);
+		int Bind_Null(int index);
+		int Bind_Text(int index, const char* val, int length, void(*deconstructor)(void*)); //fifth arg SQLITE_STATIC //lua overrider
+		int Bind_Text16(int index, const void* val, int length, void(*deconstructor)(void*)); //fifth arg SQLITE_STATIC //lua overrider
+		int Bind_Text64(int index, const char* val, unsigned __int64 length, void(*deconstructor)(void*), unsigned char encoding); //fifth arg SQLITE_STATIC //6th - SQLITE_UTF8, SQLITE_UTF16, SQLITE_UTF16BE, or SQLITE_UTF16LE //lua overrider
+		int Bind_Value(int index, const SQLiteValue* val);
+		//int Bind_Pointer(int index, void* val, const char* type, void(*deconstructor)(void*)); //fifth arg SQLITE_STATIC
+		int Bind_ZeroBlob(int index, int length);
+		int Bind_ZeroBlob64(int index, unsigned __int64 length);
+		int Bind_Parameter_Index(const char *zName);
+		int Bind_Parameter_Count();
+		const char * Bind_Parameter_Name(int index);
 	public:
 		sqlite3_stmt * m_pStmt;
 		int m_err;

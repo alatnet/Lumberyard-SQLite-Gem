@@ -254,6 +254,38 @@ namespace SQLite3 {
 		__int64 SQLiteMemoryUsed() { return (__int64)sqlite3_memory_used(); }
 		__int64 SQLiteMemoryHighWater(int resetFlag) { return (__int64)sqlite3_memory_highwater(resetFlag); }
 		__int64 SQLiteSoftHeapLimit64(__int64 N) { return (__int64)sqlite3_soft_heap_limit64((sqlite3_int64)N); }
+
+
+		void SQLiteStmtTextScript(SQLiteStmt* thisPtr, AZ::ScriptDataContext& dc) {
+			if (dc.GetNumArguments() == 3) {
+				int index, length;
+				char* value;
+				dc.ReadArg(0, index);
+				dc.ReadArg(1, value);
+				dc.ReadArg(2, length);
+
+				int ret = sqlite3_bind_text(thisPtr->m_pStmt,index, value, length, SQLITE_STATIC);
+
+				dc.PushResult(ret);
+			}
+		}
+
+		void SQLiteStmtText64Script(SQLiteStmt* thisPtr, AZ::ScriptDataContext& dc) {
+			if (dc.GetNumArguments() == 4) {
+				int index;
+				unsigned __int64 length;
+				char* value;
+				unsigned char encoding;
+				dc.ReadArg(0, index);
+				dc.ReadArg(1, value);
+				dc.ReadArg(2, length);
+				dc.ReadArg(3, encoding);
+
+				int ret = sqlite3_bind_text64(thisPtr->m_pStmt, index, value, length, SQLITE_STATIC, encoding);
+
+				dc.PushResult(ret);
+			}
+		}
 	}
 	////////////////////////////////////////////////////////////////////////
 }

@@ -24,12 +24,14 @@ namespace SQLite3 {
 
 		void SQLiteURI_Int64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc);
 		void SQLiteStatusScript(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc);
-		int SQLiteStatus64(int op, __int64 *pCurrent, __int64 *pHighwater, int resetFlag);
 		void SQLiteStatus64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc);
 
 		__int64 SQLiteMemoryUsed();
 		__int64 SQLiteMemoryHighWater(int resetFlag);
 		__int64 SQLiteSoftHeapLimit64(__int64 N);
+
+		void SQLiteStmtTextScript(SQLiteStmt* thisPtr, AZ::ScriptDataContext& dc);
+		void SQLiteStmtText64Script(SQLiteStmt* thisPtr, AZ::ScriptDataContext& dc);
 	}
 	////////////////////////////////////////////////////////////////////////
 }
