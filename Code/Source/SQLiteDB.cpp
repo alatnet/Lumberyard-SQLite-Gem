@@ -31,12 +31,17 @@ namespace SQLite3 {
 				SQLITE_METHOD_OVERRIDE(SQLitePrepareScript)
 			SQLITEDB_METHOD(Prepare_v2, nullptr, "")
 				SQLITE_METHOD_OVERRIDE(SQLitePrepare_v2Script)
+		#ifdef SQLITE_PREPARE_PERSISTENT
+			SQLITEDB_METHOD(Prepare_v3, nullptr, "")
+				SQLITE_METHOD_OVERRIDE(SQLitePrepare_v3Script)
+		#endif
 			/*SQLITEDB_METHOD(Prepare16, nullptr, "")
 			SQLITEDB_METHOD_OVERRIDE(SQLitePrepare16Script)
 			SQLITEDB_METHOD(Prepare16_v2, nullptr, "")
 			SQLITEDB_METHOD_OVERRIDE(SQLitePrepare16_v2Script)*/
 			SQLITEDB_METHOD(ErrCode, nullptr, "")
 			SQLITEDB_METHOD(ExtErrCode, nullptr, "")
+			SQLITEDB_METHOD(ExtResCode, nullptr, "")
 			SQLITEDB_METHOD(ErrMsg, nullptr, "")
 			SQLITEDB_METHOD(ErrMsg16, nullptr, "")
 			SQLITEDB_METHOD(Limit, nullptr, "")
@@ -281,6 +286,9 @@ namespace SQLite3 {
 			SQLITE_CONSTANT(MUTEX_STATIC_VFS2)
 			SQLITE_CONSTANT(MUTEX_STATIC_VFS3)
 			SQLITE_CONSTANT(PRAGMA)
+		#ifdef SQLITE_PREPARE_PERSISTENT
+			SQLITE_CONSTANT(PREPARE_PERSISTENT)
+		#endif
 			SQLITE_CONSTANT(READ)
 			SQLITE_CONSTANT(RECURSIVE)
 			SQLITE_CONSTANT(REINDEX)
@@ -666,6 +674,14 @@ namespace SQLite3 {
 		return ret;
 	}
 
+	#ifdef SQLITE_PREPARE_PERSISTENT
+	SQLiteStmt * SQLiteDB::Prepare_v3(const char *zSql, int nByte, unsigned int prepFlags, const char **pzTail) {
+		SQLiteStmt *ret = new SQLiteStmt();
+		ret->m_err = sqlite3_prepare_v3(this->m_pDB, zSql, nByte, prepFlags, &ret->m_pStmt, pzTail);
+		return ret;
+	}
+	#endif
+
 	SQLiteStmt * SQLiteDB::Prepare16(const char * sql, int nByte, const void **pzTail) {
 		SQLiteStmt *ret = new SQLiteStmt();
 		ret->m_err = sqlite3_prepare16(this->m_pDB, sql, nByte, &ret->m_pStmt, pzTail);
@@ -677,6 +693,14 @@ namespace SQLite3 {
 		ret->m_err = sqlite3_prepare16_v2(this->m_pDB, sql, nByte, &ret->m_pStmt, pzTail);
 		return ret;
 	}
+
+	#ifdef SQLITE_PREPARE_PERSISTENT
+	SQLiteStmt * SQLiteDB::Prepare16_v3(const char *zSql, int nByte, unsigned int prepFlags, const void **pzTail) {
+		SQLiteStmt *ret = new SQLiteStmt();
+		ret->m_err = sqlite3_prepare16_v3(this->m_pDB, zSql, nByte, prepFlags, &ret->m_pStmt, pzTail);
+		return ret;
+	}
+	#endif
 	////////////////////////////////////////////////////////////////////////
 
 
@@ -688,6 +712,8 @@ namespace SQLite3 {
 
 	int SQLiteDB::ErrCode() { return sqlite3_errcode(this->m_pDB); }
 	int SQLiteDB::ExtErrCode() { return sqlite3_extended_errcode(this->m_pDB); }
+	int SQLiteDB::ExtResCode(int onoff) { return sqlite3_extended_result_codes(this->m_pDB, onoff); }
+
 	const char * SQLiteDB::ErrMsg() { return sqlite3_errmsg(this->m_pDB); }
 	const void * SQLiteDB::ErrMsg16() { return sqlite3_errmsg16(this->m_pDB); }
 	int SQLiteDB::Limit(int id, int newVal) { return sqlite3_limit(this->m_pDB, id, newVal); }

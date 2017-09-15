@@ -16,6 +16,9 @@ namespace SQLite3 {
 	namespace Internal {
 		void SQLitePrepareScript(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
 		void SQLitePrepare_v2Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
+	#ifdef SQLITE_PREPARE_PERSISTENT
+		void SQLitePrepare_v3Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
+	#endif
 		/*void SQLitePrepare16Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
 		void SQLitePrepare16_v2Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);*/
 		void DB_StatusScript(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);

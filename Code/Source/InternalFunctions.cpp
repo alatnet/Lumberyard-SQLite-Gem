@@ -78,6 +78,49 @@ namespace SQLite3 {
 				delete stmt;
 			}
 		}
+	#ifdef SQLITE_PREPARE_PERSISTENT
+		void SQLitePrepare_v3Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc) {
+			SQLiteStmt * stmt = new SQLiteStmt();
+
+			const char * sql;
+			int nByte;
+			unsigned int prepFlags;
+			const char *pzTail = nullptr;
+
+			int numArgs = dc.GetNumArguments();
+
+			switch (numArgs) {
+			case 1:
+				dc.ReadArg(0, sql);
+				stmt->m_err = sqlite3_prepare_v3(thisPtr->m_pDB, sql, -1, 0, &stmt->m_pStmt, &pzTail);
+				break;
+			case 2:
+				dc.ReadArg(0, sql);
+				dc.ReadArg(1, prepFlags);
+				stmt->m_err = sqlite3_prepare_v3(thisPtr->m_pDB, sql, -1, prepFlags, &stmt->m_pStmt, &pzTail);
+				break;
+			case 3:
+
+				dc.ReadArg(0, sql);
+				dc.ReadArg(1, nByte);
+				dc.ReadArg(2, prepFlags);
+				stmt->m_err = sqlite3_prepare_v3(thisPtr->m_pDB, sql, nByte, prepFlags, &stmt->m_pStmt, &pzTail);
+				break;
+			default:
+				//error
+				break;
+			}
+
+			if (numArgs == 1 || numArgs == 2 || numArgs == 3) {
+				dc.PushResult(stmt->m_err);
+				dc.PushResult(stmt);
+				if (pzTail) dc.PushResult(pzTail);
+				else dc.PushResult(NULL);
+			} else {
+				delete stmt;
+			}
+		}
+	#endif
 		/*void SQLitePrepare16Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc) {
 		SQLiteStmt * stmt = new SQLiteStmt();
 

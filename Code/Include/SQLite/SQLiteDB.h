@@ -31,10 +31,17 @@ namespace SQLite3 {
 		virtual int Exec(const char *sql, int(*callback)(void*, int, char**, char**), void *, char **errmsg) = 0;
 		virtual SQLiteStmt * Prepare(const char * sql, int nByte, const char **pzTail) = 0;
 		virtual SQLiteStmt * Prepare_v2(const char * sql, int nByte, const char **pzTail) = 0;
+	#ifdef SQLITE_PREPARE_PERSISTENT
+		virtual SQLiteStmt * Prepare_v3(const char *zSql, int nByte, unsigned int prepFlags, const char **pzTail) = 0;
+	#endif
 		virtual SQLiteStmt * Prepare16(const char * sql, int nByte, const void **pzTail) = 0;
 		virtual SQLiteStmt * Prepare16_v2(const char * sql, int nByte, const void **pzTail) = 0;
+	#ifdef SQLITE_PREPARE_PERSISTENT
+		virtual SQLiteStmt * Prepare16_v3(const char *zSql, int nByte, unsigned int prepFlags, const void **pzTail) = 0;
+	#endif
 		virtual int ErrCode() = 0;
 		virtual int ExtErrCode() = 0;
+		virtual int ExtResCode(int onoff) = 0;
 		virtual const char * ErrMsg() = 0;
 		virtual const void * ErrMsg16() = 0;
 		virtual int Limit(int id, int newVal) = 0;
@@ -117,11 +124,18 @@ namespace SQLite3 {
 	public:
 		SQLiteStmt * Prepare(const char * sql, int nByte, const char **pzTail);
 		SQLiteStmt * Prepare_v2(const char * sql, int nByte, const char **pzTail);
+	#ifdef SQLITE_PREPARE_PERSISTENT
+		SQLiteStmt * Prepare_v3(const char *zSql, int nByte, unsigned int prepFlags, const char **pzTail);
+	#endif
 		SQLiteStmt * Prepare16(const char * sql, int nByte, const void **pzTail);
 		SQLiteStmt * Prepare16_v2(const char * sql, int nByte, const void **pzTail);
+	#ifdef SQLITE_PREPARE_PERSISTENT
+		SQLiteStmt * Prepare16_v3(const char *zSql, int nByte, unsigned int prepFlags, const void **pzTail);
+	#endif
 	public:
 		int ErrCode();
 		int ExtErrCode();
+		int ExtResCode(int onoff);
 		const char * ErrMsg();
 		const void * ErrMsg16();
 	public:
