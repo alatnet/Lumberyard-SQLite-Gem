@@ -94,7 +94,13 @@ namespace SQLite3 {
 	double SQLiteStmt::Column_Double(int iCol) { return sqlite3_column_double(this->m_pStmt, iCol); }
 	int SQLiteStmt::Column_Int(int iCol) { return sqlite3_column_int(this->m_pStmt, iCol); }
 	__int64 SQLiteStmt::Column_Int64(int iCol) { return sqlite3_column_int64(this->m_pStmt, iCol); }
-	const char * SQLiteStmt::Column_Text(int iCol) { return (const char *)sqlite3_column_text(this->m_pStmt, iCol); }
+	AZStd::string SQLiteStmt::Column_Text(int iCol) {
+		const unsigned char * str = sqlite3_column_text(this->m_pStmt, iCol);
+
+		return (str) ?
+			AZStd::string(reinterpret_cast<const char *>(str)) : //true
+			AZStd::string(""); //false
+	}
 	const void * SQLiteStmt::Column_Text16(int iCol) { return sqlite3_column_text16(this->m_pStmt, iCol); } //convert to wstring?
 	int SQLiteStmt::Column_Type(int iCol) { return sqlite3_column_type(this->m_pStmt, iCol); }
 	SQLiteValue * SQLiteStmt::Column_Value(int iCol) { return new SQLiteValue(sqlite3_column_value(this->m_pStmt, iCol)); }

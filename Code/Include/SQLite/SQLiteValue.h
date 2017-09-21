@@ -19,7 +19,7 @@ namespace SQLite3 {
 		virtual double Double() = 0;
 		virtual int Int() = 0;
 		virtual __int64 Int64() = 0;
-		virtual const char* Text() = 0;
+		virtual AZStd::string Text() = 0;
 		virtual const void* Text16() = 0;
 		virtual const void* Text16LE() = 0;
 		virtual const void* Text16BE() = 0;
@@ -47,7 +47,7 @@ namespace SQLite3 {
 		double Double();
 		int Int();
 		__int64 Int64();
-		const char* Text();
+		AZStd::string Text();
 		const void* Text16();
 		const void* Text16LE();
 		const void* Text16BE();

@@ -26,7 +26,7 @@ namespace SQLite3 {
 		virtual double Column_Double(int iCol) = 0;
 		virtual int Column_Int(int iCol) = 0;
 		virtual __int64 Column_Int64(int iCol) = 0;
-		virtual const char * Column_Text(int iCol) = 0;
+		virtual AZStd::string Column_Text(int iCol) = 0;
 		virtual const void * Column_Text16(int iCol) = 0;
 		virtual int Column_Type(int iCol) = 0;
 		virtual SQLiteValue * Column_Value(int iCol) = 0;
@@ -98,7 +98,7 @@ namespace SQLite3 {
 		double Column_Double(int iCol);
 		int Column_Int(int iCol);
 		__int64 Column_Int64(int iCol);
-		const char * Column_Text(int iCol);
+		AZStd::string Column_Text(int iCol);
 		const void * Column_Text16(int iCol); //convert to wstring?
 		int Column_Type(int iCol);
 		SQLiteValue * Column_Value(int iCol);

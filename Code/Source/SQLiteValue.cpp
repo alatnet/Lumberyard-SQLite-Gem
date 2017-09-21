@@ -46,7 +46,13 @@ namespace SQLite3 {
 	double SQLiteValue::Double() { return sqlite3_value_double(this->m_pVal); }
 	int SQLiteValue::Int() { return sqlite3_value_int(this->m_pVal); }
 	__int64 SQLiteValue::Int64() { return (__int64)sqlite3_value_int64(this->m_pVal); }
-	const char* SQLiteValue::Text() { return (const char *)sqlite3_value_text(this->m_pVal); }
+	AZStd::string SQLiteValue::Text() {
+		const unsigned char * str = sqlite3_value_text(this->m_pVal);
+
+		return (str) ?
+			AZStd::string(reinterpret_cast<const char *>(str)) : //true
+			AZStd::string(""); //false
+	}
 	const void* SQLiteValue::Text16() { return sqlite3_value_text16(this->m_pVal); }
 	const void* SQLiteValue::Text16LE() { return sqlite3_value_text16le(this->m_pVal); }
 	const void* SQLiteValue::Text16BE() { return sqlite3_value_text16be(this->m_pVal); }

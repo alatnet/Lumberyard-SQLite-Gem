@@ -539,7 +539,7 @@ namespace SQLite3 {
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
+		AZ_Printf("SQLite3", "Opening Database - %s\n", path);
 		this->m_OpenType = OPEN;
 
 		AZStd::string sPath = path;
@@ -550,7 +550,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "Resolved DB Path - %s", resolvedPath);
+				AZ_Printf("SQLite3", "Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open(resolvedPath, &this->m_pDB);
 				delete resolvedPath;
 				return ret;
@@ -578,7 +578,7 @@ namespace SQLite3 {
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
+		AZ_Printf("SQLite3", "Opening Database - %s\n", path);
 		this->m_OpenType = OPEN16;
 
 		AZStd::string sPath = path;
@@ -589,7 +589,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "Resolved DB Path - %s", resolvedPath);
+				AZ_Printf("SQLite3", "Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open16(resolvedPath, &this->m_pDB);
 				delete resolvedPath;
 				return ret;
@@ -617,7 +617,7 @@ namespace SQLite3 {
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "Opening Database - %s", path);
+		AZ_Printf("SQLite3", "Opening Database - %s\n", path);
 		this->m_OpenType = OPENV2;
 
 		AZStd::string sPath = path;
@@ -628,7 +628,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "Resolved DB Path - %s", resolvedPath);
+				AZ_Printf("SQLite3", "Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open_v2(resolvedPath, &this->m_pDB, flags, zVfs);
 				delete resolvedPath;
 				return ret;
@@ -649,7 +649,7 @@ namespace SQLite3 {
 	//hidden close
 	//used to be able to close a connection for a follow up to an open.
 	int SQLiteDB::Close2Open() {
-		AZ_Printf("SQLite3", "Closing Database");
+		AZ_Printf("SQLite3", "Closing Database.\n");
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:

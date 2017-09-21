@@ -83,7 +83,7 @@ namespace SQLite {
 	}
 
 	void SQLiteSystemComponent::Activate() {
-		AZ_Printf("SQLiteLY", "%s - Opening Database: %s", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
+		AZ_Printf("SQLiteLY", "%s - Opening Database: %s\n", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
 
 		switch (this->m_OpenType) {
 		case OPEN:
@@ -101,7 +101,7 @@ namespace SQLite {
 
 	void SQLiteSystemComponent::Deactivate() {
 		SQLiteRequestBus::Handler::BusDisconnect();
-		AZ_Printf("SQLiteLY", "%s - Closing Database", this->GetEntityId().ToString().c_str());
+		AZ_Printf("SQLiteLY", "%s - Closing Database.\n", this->GetEntityId().ToString().c_str());
 		this->m_pDB->Close();
 		delete this->m_pDB;
 	}
