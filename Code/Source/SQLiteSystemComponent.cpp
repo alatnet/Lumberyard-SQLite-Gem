@@ -6,6 +6,7 @@ namespace SQLite {
 	////////////////////////////////////////////////////////////////////////
 	// Component Implementation
 	SQLiteSystemComponent::SQLiteSystemComponent() {
+		this->m_pDB = nullptr;
 		this->m_dbPath = ":memory:";
 		this->m_OpenType = OPEN;
 		this->m_openv2_flags = 0;
@@ -80,10 +81,11 @@ namespace SQLite {
 
 	void SQLiteSystemComponent::Init() {
 		this->m_pDB = new SQLite3::SQLiteDB();
+		this->m_pDB->m_entityid = this->GetEntityId();
 	}
 
 	void SQLiteSystemComponent::Activate() {
-		AZ_Printf("SQLiteLY", "%s - Opening Database: %s\n", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
+		AZ_Printf("SQLiteLY", "[SQLiteLY] %s - Opening Database: %s\n", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
 
 		switch (this->m_OpenType) {
 		case OPEN:
@@ -101,17 +103,19 @@ namespace SQLite {
 
 	void SQLiteSystemComponent::Deactivate() {
 		SQLiteRequestBus::Handler::BusDisconnect();
-		AZ_Printf("SQLiteLY", "%s - Closing Database.\n", this->GetEntityId().ToString().c_str());
+		AZ_Printf("SQLiteLY", "[SQLiteLY] %s - Closing Database.\n", this->GetEntityId().ToString().c_str());
+		//this->m_pDB->m_entityid.SetInvalid();
 		this->m_pDB->Close();
 		delete this->m_pDB;
 	}
 	////////////////////////////////////////////////////////////////////////
 
 	SQLite3::SQLiteDB * SQLiteSystemComponent::GetConnection() {
-		if (this->GetEntityId() == this->m_pDB->m_entityid) return this->m_pDB;
-		if (this->GetEntityId() == AZ::EntityId(0)) return this->m_pDB;
-		if (this->m_pDB) return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); //creates an alias to an entity's db?
-		return nullptr;
+		return this->m_pDB;
+		//if (this->GetEntityId() == this->m_pDB->m_entityid) return this->m_pDB;
+		//if (this->GetEntityId() == AZ::EntityId(0)) return this->m_pDB;
+		//if (this->m_pDB) return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); //creates an alias to an entity's db?
+		//return nullptr;
 	}
 
 	////////////////////////////////////////////////////////////////////////

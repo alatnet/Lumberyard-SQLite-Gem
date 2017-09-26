@@ -100,10 +100,8 @@ namespace SQLite3 {
 		SQLiteDB();
 	public: //not implemented in lua
 		SQLiteDB(sqlite3* db);
-		SQLiteDB(sqlite3* db, AZ::EntityId id);
-	public: //not implemented in lua
+	public:
 		SQLiteDB(SQLiteDB * db);
-		SQLiteDB(SQLiteDB * db, AZ::EntityId id);
 	public:
 		~SQLiteDB();
 	public:

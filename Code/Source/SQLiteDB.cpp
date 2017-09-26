@@ -20,6 +20,7 @@ namespace SQLite3 {
 		#define SQLITE_CONSTANT_TYPE(name, type) ->Constant(#name, []() -> type { return SQLITE_##name##; })
 		bc->Class<SQLiteDB>("SQLite")
 			->Constructor<>()
+			->Constructor<SQLiteDB*>()
 
 			//Methods
 			SQLITEDB_METHOD(Open, nullptr, "")
@@ -484,36 +485,24 @@ namespace SQLite3 {
 
 	////////////////////////////////////////////////////////////////////////
 	//SQLite DB
-
 	SQLiteDB::SQLiteDB() {
-		SQLiteDBBus::Handler::BusConnect(this);
 		this->m_OpenType = CLOSED;
+		this->m_entityid.SetInvalid();
+		SQLiteDBBus::Handler::BusConnect(this);
 	}
 
 	SQLiteDB::SQLiteDB(sqlite3* db) {
 		m_pDB = db;
-		SQLiteDBBus::Handler::BusConnect(this);
 		this->m_OpenType = CLOSED;
-	}
-
-	SQLiteDB::SQLiteDB(sqlite3* db, AZ::EntityId id) {
-		this->m_pDB = db;
-		this->m_entityid = id;
+		this->m_entityid.SetInvalid();
 		SQLiteDBBus::Handler::BusConnect(this);
-		this->m_OpenType = CLOSED;
 	}
 
 	SQLiteDB::SQLiteDB(SQLiteDB * db) {
 		this->m_pDB = db->m_pDB;
-		SQLiteDBBus::Handler::BusConnect(this);
 		this->m_OpenType = CLOSED;
-	}
-
-	SQLiteDB::SQLiteDB(SQLiteDB * db, AZ::EntityId id) {
-		this->m_pDB = db->m_pDB;
-		this->m_entityid = id;
+		this->m_entityid.SetInvalid();
 		SQLiteDBBus::Handler::BusConnect(this);
-		this->m_OpenType = db->m_OpenType;
 	}
 
 	SQLiteDB::~SQLiteDB() {
@@ -522,24 +511,13 @@ namespace SQLite3 {
 	}
 
 	int SQLiteDB::Open(const char * path) {
-		if (this->m_entityid.IsValid()) {
-			SQLiteDB * db;
-			SQLITE_BUS(db, this->m_entityid, GetConnection);
-			
-			if (db != nullptr) {
-				int ret = db->Open(path);
-				this->m_OpenType = db->m_OpenType;
-				return ret;
-			}
-		}
-
 		if (this->m_OpenType != CLOSED) {
 			int err = this->Close2Open();
 			if (err != SQLITE_OK) return err;
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "Opening Database - %s\n", path);
+		AZ_Printf("SQLite3", "[SQLite3] Opening Database - %s\n", path);
 		this->m_OpenType = OPEN;
 
 		AZStd::string sPath = path;
@@ -550,7 +528,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "Resolved DB Path - %s\n", resolvedPath);
+				AZ_Printf("SQLite3", "[SQLite3] Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open(resolvedPath, &this->m_pDB);
 				delete resolvedPath;
 				return ret;
@@ -561,24 +539,13 @@ namespace SQLite3 {
 	}
 
 	int SQLiteDB::Open16(const char * path) {
-		if (this->m_entityid.IsValid()) {
-			SQLiteDB * db;
-			SQLITE_BUS(db, this->m_entityid, GetConnection);
-
-			if (db != nullptr) {
-				int ret = db->Open16(path);
-				this->m_OpenType = db->m_OpenType;
-				return ret;
-			}
-		}
-
 		if (this->m_OpenType != CLOSED) {
 			int err = this->Close2Open();
 			if (err != SQLITE_OK) return err;
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "Opening Database - %s\n", path);
+		AZ_Printf("SQLite3", "[SQLite3] Opening Database - %s\n", path);
 		this->m_OpenType = OPEN16;
 
 		AZStd::string sPath = path;
@@ -589,7 +556,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "Resolved DB Path - %s\n", resolvedPath);
+				AZ_Printf("SQLite3", "[SQLite3] Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open16(resolvedPath, &this->m_pDB);
 				delete resolvedPath;
 				return ret;
@@ -600,24 +567,13 @@ namespace SQLite3 {
 	}
 
 	int SQLiteDB::Open_v2(const char * path, int flags, const char *zVfs) {
-		if (this->m_entityid.IsValid()) {
-			SQLiteDB * db;
-			SQLITE_BUS(db, this->m_entityid, GetConnection);
-
-			if (db != nullptr) {
-				int ret = db->Open_v2(path, flags, zVfs);
-				this->m_OpenType = db->m_OpenType;
-				return ret;
-			}
-		}
-
 		if (this->m_OpenType != CLOSED) {
 			int err = this->Close2Open();
 			if (err != SQLITE_OK) return err;
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "Opening Database - %s\n", path);
+		AZ_Printf("SQLite3", "[SQLite3] Opening Database - %s\n", path);
 		this->m_OpenType = OPENV2;
 
 		AZStd::string sPath = path;
@@ -628,7 +584,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "Resolved DB Path - %s\n", resolvedPath);
+				AZ_Printf("SQLite3", "[SQLite3] Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open_v2(resolvedPath, &this->m_pDB, flags, zVfs);
 				delete resolvedPath;
 				return ret;
@@ -642,6 +598,7 @@ namespace SQLite3 {
 	//if entity id is valid allows ONLY the entity to close it.
 	int SQLiteDB::Close() {
 		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
+		this->m_OpenType = CLOSED;
 		return this->Close2Open();
 		//return sqlite3_close(this->m_pDB);
 	}
@@ -649,7 +606,7 @@ namespace SQLite3 {
 	//hidden close
 	//used to be able to close a connection for a follow up to an open.
 	int SQLiteDB::Close2Open() {
-		AZ_Printf("SQLite3", "Closing Database.\n");
+		AZ_Printf("SQLite3", "[SQLite3] Closing Database.\n");
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:
