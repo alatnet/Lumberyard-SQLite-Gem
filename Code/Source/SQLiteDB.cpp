@@ -488,6 +488,7 @@ namespace SQLite3 {
 	SQLiteDB::SQLiteDB() {
 		this->m_OpenType = CLOSED;
 		this->m_entityid.SetInvalid();
+		this->m_pDB = nullptr;
 		SQLiteDBBus::Handler::BusConnect(this);
 	}
 
@@ -597,15 +598,17 @@ namespace SQLite3 {
 	//visible close
 	//if entity id is valid allows ONLY the entity to close it.
 	int SQLiteDB::Close() {
-		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;
+		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;		
+		int ret = this->Close2Open();
 		this->m_OpenType = CLOSED;
-		return this->Close2Open();
-		//return sqlite3_close(this->m_pDB);
+		return ret;
 	}
 
 	//hidden close
 	//used to be able to close a connection for a follow up to an open.
 	int SQLiteDB::Close2Open() {
+		if (!this->m_pDB) return SQLITE_OK;
+
 		AZ_Printf("SQLite3", "[SQLite3] Closing Database.\n");
 		switch (this->m_OpenType) {
 		case OPEN:
