@@ -3,6 +3,9 @@
 #include "SQLite\SQLiteDB.h"
 #include "InternalFunctions.h"
 
+#include <locale>
+#include <codecvt>
+
 namespace SQLite3 {
 	////////////////////////////////////////////////////////////////////////
 	void SQLiteStmt::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
@@ -23,6 +26,7 @@ namespace SQLite3 {
 			SQLITESTMT_METHOD(Column_Int, nullptr, "")
 			SQLITESTMT_METHOD(Column_Int64, nullptr, "")
 			SQLITESTMT_METHOD(Column_Text, nullptr, "")
+			SQLITESTMT_METHOD(Column_TextC, nullptr, "")
 			//SQLITESTMT_METHOD(Column_Text16, nullptr, "")
 			SQLITESTMT_METHOD(Column_Type, nullptr, "")
 			SQLITESTMT_METHOD(Column_Value, nullptr, "")
@@ -101,6 +105,7 @@ namespace SQLite3 {
 			AZStd::string(reinterpret_cast<const char *>(str)) : //true
 			AZStd::string(""); //false
 	}
+	const unsigned char * SQLiteStmt::Column_TextC(int iCol) { return sqlite3_column_text(this->m_pStmt, iCol); }
 	const void * SQLiteStmt::Column_Text16(int iCol) { return sqlite3_column_text16(this->m_pStmt, iCol); } //convert to wstring?
 	int SQLiteStmt::Column_Type(int iCol) { return sqlite3_column_type(this->m_pStmt, iCol); }
 	SQLiteValue * SQLiteStmt::Column_Value(int iCol) { return new SQLiteValue(sqlite3_column_value(this->m_pStmt, iCol)); }
