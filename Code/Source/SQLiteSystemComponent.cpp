@@ -26,8 +26,8 @@ namespace SQLite {
 				ec->Class<SQLiteSystemComponent>("SQLite", "SQLite database component.")
 					->ClassElement(AZ::Edit::ClassElements::EditorData, "")
 					->Attribute(AZ::Edit::Attributes::Category, "Database")
-					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("Game"))
-					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("System"))
+					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("Game", 0x232b318c))
+					->Attribute(AZ::Edit::Attributes::AppearsInAddComponentMenu, AZ_CRC("System", 0xc94d118b))
 					->Attribute(AZ::Edit::Attributes::AutoExpand, true)
 					->DataElement(0, &SQLiteSystemComponent::m_dbPath, "Database", "Database Path")
 					->DataElement(AZ::Edit::UIHandlers::ComboBox, &SQLiteSystemComponent::m_OpenType, "Open Type", "Which open function to use.")
@@ -63,11 +63,11 @@ namespace SQLite {
 	}
 
 	void SQLiteSystemComponent::GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided) {
-		provided.push_back(AZ_CRC("SQLiteLYService"));
+		provided.push_back(AZ_CRC("SQLiteLYService", 0x9aac87df));
 	}
 
 	void SQLiteSystemComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible) {
-		incompatible.push_back(AZ_CRC("SQLiteLYService"));
+		incompatible.push_back(AZ_CRC("SQLiteLYService", 0x9aac87df));
 	}
 
 	void SQLiteSystemComponent::GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required) {

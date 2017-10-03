@@ -7,10 +7,6 @@ Download the amalgamation version to be able to compile the gem.
 sqlite3.c needs to be placed in Code/Source.  
 sqlite3.h needs to be placed in Code/Include/SQLite.
 
-## Build Requirements
-Due to the nature of how Lumberyard builds its files, it will force enable C2220 - Warning treated as error (/WX).  
-To overcome this, it is required that you add "__pragma(warning(disable : 4267));" and "__pragma(warning(default : 4267));" for the section of code that triggers this error.  
-
 ## C++ Syntax
 The C++ Syntax is generally the same as the C syntax but due to the way Lumberyard loads Components you will not be able to directly use the C++ classes themselves.  
 To use the C++ classes functions you have to go through EBuses.  

@@ -34,11 +34,11 @@ namespace SQLite3 {
 	}
 
 	void SQLiteComponent::GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided) {
-		provided.push_back(AZ_CRC("SQLite3Service"));
+		provided.push_back(AZ_CRC("SQLite3Service", 0xb8f33357));
 	}
 
 	void SQLiteComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible) {
-		incompatible.push_back(AZ_CRC("SQLite3Service"));
+		incompatible.push_back(AZ_CRC("SQLite3Service", 0xb8f33357));
 	}
 
 	void SQLiteComponent::GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required) {
@@ -47,7 +47,7 @@ namespace SQLite3 {
 
 	void SQLiteComponent::GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent) {
 		//(void)dependent;
-		dependent.push_back(AZ_CRC("SQLiteLYService"));
+		dependent.push_back(AZ_CRC("SQLiteLYService", 0x9aac87df));
 	}
 
 	void SQLiteComponent::Init() {

@@ -15,5 +15,6 @@ def build(bld):
 		],
 		release_defines = [
 			'SQLITE_DEFAULT_MEMSTATUS=0'
-		]
+		],
+        win_features = ['crcfix']
     )
