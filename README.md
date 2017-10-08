@@ -8,14 +8,13 @@ sqlite3.c needs to be placed in Code/Source.
 sqlite3.h needs to be placed in Code/Include/SQLite.
 
 ## C++ Syntax
-The C++ Syntax is generally the same as the C syntax but due to the way Lumberyard loads Components you will not be able to directly use the C++ classes themselves.  
-To use the C++ classes functions you have to go through EBuses.  
-Almost every function in the classes has an EBus equivalent.  
+The C++ Syntax is generally the same as the C syntax sans using an object struct which the C++ class represents.  
+Along with C++ classes, almost every function in the classes has an EBus equivalent.  
 Each EBus requires an address which is the pointer to the class that is going to have it\'s function called.  
 In addition, macros are available to make it easier to deal with the buses.
 
 ## Lumberyard Specific C++
-Due to the way EBuses function, there is no current way to create a new pointer (i.e. new <class>).  
+Due to the way EBuses function, there is no current way to create a new pointer (i.e. new \<class\>).  
 To get around this, the System Entity can create new pointers using it\'s SQLiteBus EBus interface.  
 DO NOT under ANY circumstances use the Broadcast EBus function.  
 Use Event or EventResult instead to use a specific database\'s function and a class pointer as the address.  
@@ -321,7 +320,7 @@ int main(){
 The lua syntax is basicly a slight variation of the C syntax.  
 For example, sqlite3_errcode becomes SQLite.ErrCode.  
 Do note that some functions may have shorter names than the C++ version.  
-Any C++ function that has Out parameters are multi returned in Lua starting with the C++ return then Out parameters.  
+Any C\\C++ function that has Out parameters are multi returned in Lua starting with the C++ return then Out parameters.  
 Constants and Enums are provided with variation.  SQLITE_*name* becomes SQLite.*name*.
 
 ## Lumberyard Specific Lua
