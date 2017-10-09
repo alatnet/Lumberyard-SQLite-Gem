@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SQLite\SQLiteBackup.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	void SQLiteBackup::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		////////////////////////////////////////////////////////////////////////
 		// Backup Class

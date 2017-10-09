@@ -53,21 +53,27 @@ namespace SQLite {
 				SQLITE_EVENT(GetConnection)
 				//SQLITE_EVENTLUA(GetSysConnection)
 				;
-			behaviorContext->Class<SQLiteSystemComponent>("SQLiteLY")
-				->Method("GetSysConnection", &SQLiteSystemComponent::GetSysConnectionLua, nullptr, "");
+			behaviorContext->Class<SQLiteSystemComponent>("SQLite3")
+				->Method("GetSysConnection", &SQLiteSystemComponent::GetSysConnectionLua, nullptr, "")
+				->Constant("TEXT", []() -> int { return SQLITE3_TEXT; });
 			#undef SQLITE_EVENTLUA
 			#undef SQLITE_EVENT
 
-			//behaviorContext->EBus<SQLiteLuaRequests>("");
+			SQLite::SQLiteDB::RegisterBehaviorContext(behaviorContext);
+			SQLite::SQLiteStmt::RegisterBehaviorContext(behaviorContext);
+			SQLite::SQLiteBackup::RegisterBehaviorContext(behaviorContext);
+			SQLite::SQLiteValue::RegisterBehaviorContext(behaviorContext);
+			SQLite::SQLiteVFS::RegisterBehaviorContext(behaviorContext);
+			SQLite::SQLiteMutex::RegisterBehaviorContext(behaviorContext);
 		}
 	}
 
 	void SQLiteSystemComponent::GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided) {
-		provided.push_back(AZ_CRC("SQLiteLYService", 0x9aac87df));
+		provided.push_back(AZ_CRC("SQLiteService", 0x892cc9bc));
 	}
 
 	void SQLiteSystemComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible) {
-		incompatible.push_back(AZ_CRC("SQLiteLYService", 0x9aac87df));
+		incompatible.push_back(AZ_CRC("SQLiteService", 0x892cc9bc));
 	}
 
 	void SQLiteSystemComponent::GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required) {
@@ -80,7 +86,7 @@ namespace SQLite {
 	}
 
 	void SQLiteSystemComponent::Init() {
-		this->m_pDB = new SQLite3::SQLiteDB();
+		this->m_pDB = new SQLite::SQLiteDB();
 		this->m_pDB->m_entityid = this->GetEntityId();
 	}
 
@@ -110,11 +116,11 @@ namespace SQLite {
 	}
 	////////////////////////////////////////////////////////////////////////
 
-	SQLite3::SQLiteDB * SQLiteSystemComponent::GetConnection() {
+	SQLite::SQLiteDB * SQLiteSystemComponent::GetConnection() {
 		return this->m_pDB;
 		//if (this->GetEntityId() == this->m_pDB->m_entityid) return this->m_pDB;
 		//if (this->GetEntityId() == AZ::EntityId(0)) return this->m_pDB;
-		//if (this->m_pDB) return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); //creates an alias to an entity's db?
+		//if (this->m_pDB) return new SQLite::SQLiteDB(this->m_pDB, this->GetEntityId()); //creates an alias to an entity's db?
 		//return nullptr;
 	}
 
@@ -205,7 +211,7 @@ namespace SQLite {
 		return ret;
 	}
 
-	/*namespace SQLite3 {
+	/*namespace SQLite {
 		void SQLite3Constructor(SQLite * thisPtr, AZ::ScriptDataContext& dc) {
 			if (dc.GetNumArguments() == 1) {
 				const char * path;
@@ -216,8 +222,8 @@ namespace SQLite {
 	}*/
 	////////////////////////////////////////////////////////////////////////
 
-	SQLite3::SQLiteDB * SQLiteSystemComponent::GetSysConnectionLua() {
-		SQLite3::SQLiteDB * ret = nullptr;
+	SQLite::SQLiteDB * SQLiteSystemComponent::GetSysConnectionLua() {
+		SQLite::SQLiteDB * ret = nullptr;
 		SQLITE_BUS(ret, AZ::EntityId(0), GetConnection);
 		return ret;
 	}

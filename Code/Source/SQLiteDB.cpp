@@ -8,7 +8,7 @@
 
 #include <AzCore\IO\SystemFile.h>
 
-namespace SQLite3 {
+namespace SQLite {
 	void SQLiteDB::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		////////////////////////////////////////////////////////////////////////
 		// SQLite class
@@ -69,7 +69,7 @@ namespace SQLite3 {
 			SQLITEDB_METHOD(Wal_Checkpoint_v2, nullptr, "") //override
 				SQLITE_METHOD_OVERRIDE(Wal_Checkpoint_v2Script)
 
-			//SQLite3 Raw Methods
+			//SQLite Raw Methods
 			SQLITE_METHOD("ErrStr", errstr, nullptr, "")
 			SQLITE_METHOD("LibVersion", libversion, nullptr, "")
 			SQLITE_METHOD("LibVersion_Number", libversion_number, nullptr, "")
@@ -518,7 +518,7 @@ namespace SQLite3 {
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "[SQLite3] Opening Database - %s\n", path);
+		AZ_Printf("SQLite", "[SQLite] Opening Database - %s\n", path);
 		this->m_OpenType = OPEN;
 
 		AZStd::string sPath = path;
@@ -529,7 +529,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "[SQLite3] Resolved DB Path - %s\n", resolvedPath);
+				AZ_Printf("SQLite", "[SQLite] Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open(resolvedPath, &this->m_pDB);
 				delete resolvedPath;
 				return ret;
@@ -546,7 +546,7 @@ namespace SQLite3 {
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "[SQLite3] Opening Database - %s\n", path);
+		AZ_Printf("SQLite", "[SQLite] Opening Database - %s\n", path);
 		this->m_OpenType = OPEN16;
 
 		AZStd::string sPath = path;
@@ -557,7 +557,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "[SQLite3] Resolved DB Path - %s\n", resolvedPath);
+				AZ_Printf("SQLite", "[SQLite] Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open16(resolvedPath, &this->m_pDB);
 				delete resolvedPath;
 				return ret;
@@ -574,7 +574,7 @@ namespace SQLite3 {
 		}
 
 		if (path == nullptr) path = ":memory:";
-		AZ_Printf("SQLite3", "[SQLite3] Opening Database - %s\n", path);
+		AZ_Printf("SQLite", "[SQLite] Opening Database - %s\n", path);
 		this->m_OpenType = OPENV2;
 
 		AZStd::string sPath = path;
@@ -585,7 +585,7 @@ namespace SQLite3 {
 			else {
 				char * resolvedPath = new char[AZ_MAX_PATH_LEN];
 				gEnv->pFileIO->ResolvePath(path, resolvedPath, AZ_MAX_PATH_LEN);
-				AZ_Printf("SQLite3", "[SQLite3] Resolved DB Path - %s\n", resolvedPath);
+				AZ_Printf("SQLite", "[SQLite] Resolved DB Path - %s\n", resolvedPath);
 				int ret = sqlite3_open_v2(resolvedPath, &this->m_pDB, flags, zVfs);
 				delete resolvedPath;
 				return ret;
@@ -609,7 +609,7 @@ namespace SQLite3 {
 	int SQLiteDB::Close2Open() {
 		if (!this->m_pDB) return SQLITE_OK;
 
-		AZ_Printf("SQLite3", "[SQLite3] Closing Database.\n");
+		AZ_Printf("SQLite", "[SQLite] Closing Database.\n");
 		switch (this->m_OpenType) {
 		case OPEN:
 		case OPEN16:

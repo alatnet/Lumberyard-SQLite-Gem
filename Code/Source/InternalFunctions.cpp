@@ -2,8 +2,9 @@
 #include "InternalFunctions.h"
 
 #include "SQLite\SQLiteDB.h"
+#include "SQLite\SQLiteStmt.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	////////////////////////////////////////////////////////////////////////
 	//Method Overrides
 	namespace Internal {
@@ -248,7 +249,7 @@ namespace SQLite3 {
 			}
 		}
 
-		void SQLiteURI_Int64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc) {
+		void SQLiteURI_Int64Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc) {
 			if (dc.GetNumArguments() == 3) {
 				const char * filename;
 				const char * param;
@@ -264,7 +265,7 @@ namespace SQLite3 {
 			}
 		}
 
-		void SQLiteStatusScript(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc) {
+		void SQLiteStatusScript(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc) {
 			if (dc.GetNumArguments() == 2) {
 				int op, resetFlag;
 				dc.ReadArg(0, op);
@@ -279,7 +280,7 @@ namespace SQLite3 {
 			}
 		}
 		
-		void SQLiteStatus64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc) {
+		void SQLiteStatus64Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc) {
 			if (dc.GetNumArguments() == 2) {
 				int op, resetFlag;
 				dc.ReadArg(0, op);

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SQLite\SQLiteMutex.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	void SQLiteMutex::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 	#define SQLITEMUTEX_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteMutex::##name##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteMutex>("SQLiteMutex")

@@ -3,6 +3,7 @@ Code/Include/SQLite/sqlite3.h
 Code/Include/SQLite/sqlite3ext.h
 Code/Include/SQLite/SQLiteBusCodeGen.h
 Code/Include/SQLite/SQLiteBusCodeGen.json
+Code/Source/SQLiteSystemComponent.crcfix_old
 Code/Source/shell.c
 Code/Source/sqlite3.c
 Code/Source/SQLiteSystemComponentCodeGen.h

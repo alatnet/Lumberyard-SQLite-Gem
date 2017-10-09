@@ -3,7 +3,7 @@
 #include <platform_impl.h>
 
 #include "SQLiteSystemComponent.h"
-#include "SQLiteComponent.h"
+//#include "SQLiteComponent.h"
 
 #include <IGem.h>
 
@@ -20,7 +20,7 @@ namespace SQLite
         {
             // Push results of [MyComponent]::CreateDescriptor() into m_descriptors here.
             m_descriptors.insert(m_descriptors.end(), {
-				SQLite3::SQLiteComponent::CreateDescriptor(),
+				//SQLite::SQLiteComponent::CreateDescriptor(),
 				SQLiteSystemComponent::CreateDescriptor(),
             });
         }
@@ -31,7 +31,7 @@ namespace SQLite
         AZ::ComponentTypeList GetRequiredSystemComponents() const override
         {
             return AZ::ComponentTypeList{
-				azrtti_typeid<SQLite3::SQLiteComponent>(),
+				//azrtti_typeid<SQLite::SQLiteComponent>(),
 				azrtti_typeid<SQLiteSystemComponent>(),
             };
         }

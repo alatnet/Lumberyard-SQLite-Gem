@@ -3,7 +3,7 @@
 #include <AzCore\RTTI\TypeInfo.h>
 #include <AzCore/RTTI/BehaviorContext.h>
 
-namespace SQLite3 {
+namespace SQLite {
 	class SQLiteMutex;
 
 	class SQLiteMutexRequests

@@ -12,6 +12,9 @@
 
 #include <AzCore\RTTI\TypeInfo.h>
 
+#include "SQLiteClasses.h"
+#include "InternalFunctions.h"
+
 namespace SQLite
 {
 	class SQLiteLuaRequests : public AZ::EBusTraits {
@@ -45,12 +48,12 @@ namespace SQLite
     public:
         ////////////////////////////////////////////////////////////////////////
         // SQLiteRequestBus interface implementation
-		SQLite3::SQLiteDB * GetConnection();/* { return new SQLite3::SQLiteDB(this->m_pDB, this->GetEntityId()); }*/
-		SQLite3::SQLiteDB * NewConnection() { return new SQLite3::SQLiteDB(); }
-		SQLite3::SQLiteBackup * NewBackup(SQLite3::SQLiteDB * dest, const char * dname, SQLite3::SQLiteDB * src, const char *sname) { return new SQLite3::SQLiteBackup(dest, dname, src, sname); }
-		SQLite3::SQLiteMutex * NewMutex(int N) { return new SQLite3::SQLiteMutex(N); }
-		SQLite3::SQLiteVFS * NewVFS(const char * vfsName) { return new SQLite3::SQLiteVFS(vfsName); }
-		SQLite3::SQLiteVFS * NewVFS(sqlite3_vfs * vfs) { return new SQLite3::SQLiteVFS(vfs); }
+		SQLite::SQLiteDB * GetConnection();/* { return new SQLite::SQLiteDB(this->m_pDB, this->GetEntityId()); }*/
+		SQLite::SQLiteDB * NewConnection() { return new SQLite::SQLiteDB(); }
+		SQLite::SQLiteBackup * NewBackup(SQLite::SQLiteDB * dest, const char * dname, SQLite::SQLiteDB * src, const char *sname) { return new SQLite::SQLiteBackup(dest, dname, src, sname); }
+		SQLite::SQLiteMutex * NewMutex(int N) { return new SQLite::SQLiteMutex(N); }
+		SQLite::SQLiteVFS * NewVFS(const char * vfsName) { return new SQLite::SQLiteVFS(vfsName); }
+		SQLite::SQLiteVFS * NewVFS(sqlite3_vfs * vfs) { return new SQLite::SQLiteVFS(vfs); }
         ////////////////////////////////////////////////////////////////////////
 	protected:
 		////////////////////////////////////////////////////////////////////////
@@ -59,7 +62,7 @@ namespace SQLite
 		int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg);
 		////////////////////////////////////////////////////////////////////////
 
-		static SQLite3::SQLiteDB * GetSysConnectionLua();
+		static SQLite::SQLiteDB * GetSysConnectionLua();
 	protected:
         ////////////////////////////////////////////////////////////////////////
         // AZ::Component interface implementation
@@ -72,7 +75,7 @@ namespace SQLite
 	private:
 		AZStd::string m_dbPath;
 	protected:
-		SQLite3::SQLiteDB *m_pDB;
+		SQLite::SQLiteDB *m_pDB;
 	private:
 		enum OpenType {
 			OPEN,

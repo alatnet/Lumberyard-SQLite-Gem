@@ -24,15 +24,15 @@ namespace SQLite
 		using BusIdType = AZ::EntityId;
 	public:
         // Public functions
-		virtual SQLite3::SQLiteDB * GetConnection() = 0;
-		virtual SQLite3::SQLiteDB * NewConnection() = 0;
+		virtual SQLite::SQLiteDB * GetConnection() = 0;
+		virtual SQLite::SQLiteDB * NewConnection() = 0;
 	public:
-		virtual SQLite3::SQLiteBackup * NewBackup(SQLite3::SQLiteDB * dest, const char * dname, SQLite3::SQLiteDB * src, const char *sname) = 0;
+		virtual SQLite::SQLiteBackup * NewBackup(SQLite::SQLiteDB * dest, const char * dname, SQLite::SQLiteDB * src, const char *sname) = 0;
 	public:
-		virtual SQLite3::SQLiteMutex * NewMutex(int N) = 0;
+		virtual SQLite::SQLiteMutex * NewMutex(int N) = 0;
 	public:
-		virtual SQLite3::SQLiteVFS * NewVFS(const char * vfsName) = 0;
-		virtual SQLite3::SQLiteVFS * NewVFS(sqlite3_vfs * vfs) = 0;
+		virtual SQLite::SQLiteVFS * NewVFS(const char * vfsName) = 0;
+		virtual SQLite::SQLiteVFS * NewVFS(sqlite3_vfs * vfs) = 0;
 	protected: //Lua specific functions. Not exposed for usage in regular C++.
 		virtual int ExecLua(const char *sql, void * cbarg) = 0;
 		virtual int ExecToLua(AZ::EntityId id, const char *sql, void * cbarg) = 0;
@@ -42,7 +42,7 @@ namespace SQLite
 
 //quick and easy defines
 #define SQLITE_BUS(ret, var, func, ...) SQLite::SQLiteRequestBus::EventResult(##ret##,##var##, &SQLite::SQLiteRequestBus::Events::##func##,__VA_ARGS__)
-#define SQLITE3_BUS(ret, var, class_, func, ...) SQLite3::##class_##::EventResult(##ret##,##var##, &SQLite3::##class_##::Events::##func##,__VA_ARGS__)
+#define SQLITE3_BUS(ret, var, class_, func, ...) SQLite::##class_##::EventResult(##ret##,##var##, &SQLite::##class_##::Events::##func##,__VA_ARGS__)
 #define SQLITEDB_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteDBBus, func, __VA_ARGS__)
 #define SQLITESTMT_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteStmtBus, func, __VA_ARGS__)
 #define SQLITEVFS_BUS(ret, var, func, ...) SQLITE3_BUS(ret,var, SQLiteVFSBus, func, __VA_ARGS__)

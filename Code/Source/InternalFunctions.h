@@ -1,14 +1,11 @@
 #pragma once
 
-//#include "SQLiteStmt.h"
-#include "SQLiteComponent.h"
-//#include "SQLiteDB.h"
+#include <AzCore/Script/ScriptContext.h>
 
-namespace SQLite3 {
+namespace SQLite {
 	#define SQLITE_METHOD_OVERRIDE(name) ->Attribute(AZ::Script::Attributes::MethodOverride, &Internal::##name##)
 
-	class SQLiteComponent;
-	//class SQLiteStmt;
+	class SQLiteStmt;
 	class SQLiteDB;
 
 	////////////////////////////////////////////////////////////////////////
@@ -25,9 +22,9 @@ namespace SQLite3 {
 		void Load_ExtensionScript(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
 		void Wal_Checkpoint_v2Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
 
-		void SQLiteURI_Int64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc);
-		void SQLiteStatusScript(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc);
-		void SQLiteStatus64Script(SQLiteComponent* thisPtr, AZ::ScriptDataContext& dc);
+		void SQLiteURI_Int64Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
+		void SQLiteStatusScript(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
+		void SQLiteStatus64Script(SQLiteDB* thisPtr, AZ::ScriptDataContext& dc);
 
 		__int64 SQLiteMemoryUsed();
 		__int64 SQLiteMemoryHighWater(int resetFlag);

@@ -5,7 +5,7 @@
 
 #include "SQLiteValue.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	class SQLiteStmt;
 	class SQLiteDB;
 

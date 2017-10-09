@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SQLite\SQLiteVFS.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	void SQLiteVFS::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		#define SQLITEVFS_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteVFS::##name##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteVFS>("SQLite3VFS")

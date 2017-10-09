@@ -39,31 +39,31 @@ int main(){
   int ret;
   //System Entity Database
   ///////////////////////////////////////////////////
-  SQLite3::SQLiteDB * sysDb;
+  SQLite::SQLiteDB * sysDb;
   SQLite::SQLiteRequestBus::EventResult(sysDb, AZ::EntityId(0), &SQLite::SQLiteRequestBus::Events::GetConnection); //Get the system entity database connection
   AZ_Assert(sysDb, "sysDb is null.");
 
   //create a table
-  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "CREATE TABLE System (Col1 int, Col2 varchar(255));", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, sysDb, &SQLite::SQLiteDBBus::Events::Exec, "CREATE TABLE System (Col1 int, Col2 varchar(255));", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Create Table Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(0,'FIRST');", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, sysDb, &SQLite::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(0,'FIRST');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(1,'SECOND');", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, sysDb, &SQLite::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(1,'SECOND');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, sysDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(2,'THIRD');", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, sysDb, &SQLite::SQLiteDBBus::Events::Exec, "INSERT INTO System (Col1, Col2) VALUES(2,'THIRD');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
   
   //select all from the table
-  SQLite3::SQLiteDBBus::EventResult(
+  SQLite::SQLiteDBBus::EventResult(
     ret,
     sysDb,
-    &SQLite3::SQLiteDBBus::Events::Exec,
+    &SQLite::SQLiteDBBus::Events::Exec,
     "SELECT * FROM System;",
     [](void* cbarg, int argc, char **argv, char **azColName) -> int {
       for (int i = 0; i < argc; i++) CryLog("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -77,35 +77,35 @@ int main(){
 
   //Individual Database
   ///////////////////////////////////////////////////
-  SQLite3::SQLiteDB * indDb;
+  SQLite::SQLiteDB * indDb;
   SQLite::SQLiteRequestBus::EventResult(indDb, AZ::EntityId(0), &SQLite::SQLiteRequestBus::Events::NewConnection); //create a new database connection (separate from entity)
   AZ_Assert(indDb, "indDb is null.");
 
   //open the database connection
-  SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQliteDBBus::Events::Open, ":memory:");
+  SQLite::SQLiteDBBus::EventResult(ret, indDb, &SQLite::SQliteDBBus::Events::Open, ":memory:");
   AZ_Assert(ret == SQLITE_OK, "Open Failed.");
 
   //create a table
-  SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQLiteDBBus::Events::Exec, "CREATE TABLE Individual (Col3 int, Col4 varchar(255));", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, indDb, &SQLite::SQLiteDBBus::Events::Exec, "CREATE TABLE Individual (Col3 int, Col4 varchar(255));", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Create Table Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO Individual (Col3, Col4) VALUES(3,'FOURTH');", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, indDb, &SQLite::SQLiteDBBus::Events::Exec, "INSERT INTO Individual (Col3, Col4) VALUES(3,'FOURTH');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO Individual (Col3, Col4) VALUES(4,'FIFTH');", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, indDb, &SQLite::SQLiteDBBus::Events::Exec, "INSERT INTO Individual (Col3, Col4) VALUES(4,'FIFTH');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
 
   //insert a row
-  SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQLiteDBBus::Events::Exec, "INSERT INTO Individual (Col3, Col4) VALUES(5,'SIXTH');", nullptr, nullptr, nullptr);
+  SQLite::SQLiteDBBus::EventResult(ret, indDb, &SQLite::SQLiteDBBus::Events::Exec, "INSERT INTO Individual (Col3, Col4) VALUES(5,'SIXTH');", nullptr, nullptr, nullptr);
   AZ_Assert(ret == SQLITE_OK, "Insert Failed.");
   
   //select all from the table
-  SQLite3::SQLiteDBBus::EventResult(
+  SQLite::SQLiteDBBus::EventResult(
     ret,
     sysDb,
-    &SQLite3::SQLiteDBBus::Events::Exec,
+    &SQLite::SQLiteDBBus::Events::Exec,
     "SELECT * FROM Individual;",
     [](void* cbarg, int argc, char **argv, char **azColName) -> int {
       for (int i = 0; i < argc; i++) CryLog("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -117,7 +117,7 @@ int main(){
   AZ_Assert(ret == SQLITE_OK, "Select Failed");
   
   //close the database connection
-  SQLite3::SQLiteDBBus::EventResult(ret, indDb, &SQLite3::SQliteDBBus::Events::Close);
+  SQLite::SQLiteDBBus::EventResult(ret, indDb, &SQLite::SQliteDBBus::Events::Close);
   AZ_Assert(ret == SQLITE_OK, "Close Failed.");
 
   //free up memory;
@@ -136,7 +136,7 @@ int main(){
   int ret;
   //System Entity Database
   ///////////////////////////////////////////////////
-  SQLite3::SQLiteDB * sysDb;
+  SQLite::SQLiteDB * sysDb;
   SQLITE_BUS(sysDb, AZ::EntityId(0), GetConnection); //Get the system entity database connection
   AZ_Assert(sysDb, "sysDb is null.");
 
@@ -174,7 +174,7 @@ int main(){
 
   //Individual Database
   ///////////////////////////////////////////////////
-  SQLite3::SQLiteDB * indDb;
+  SQLite::SQLiteDB * indDb;
   SQLITE_BUS(indDb, AZ::EntityId(0), NewConnection); //create a new database connection (separate from entity)
   AZ_Assert(indDb, "indDb is null.");
 
@@ -233,7 +233,7 @@ int main(){
   int ret;
   //System Entity Database
   ///////////////////////////////////////////////////
-  SQLite3::SQLiteDB * sysDb;
+  SQLite::SQLiteDB * sysDb;
   SQLITE_BUS(sysDb, AZ::EntityId(0), GetConnection); //Get the system entity database connection
   AZ_Assert(sysDb, "sysDb is null.");
 
@@ -268,7 +268,7 @@ int main(){
 
   //Individual Database
   ///////////////////////////////////////////////////
-  SQLite3::SQLiteDB * indDb;
+  SQLite::SQLiteDB * indDb;
   SQLITE_BUS(indDb, AZ::EntityId(0), NewConnection); //create a new database connection (separate from entity)
   AZ_Assert(indDb, "indDb is null.");
 
@@ -430,7 +430,7 @@ function Example:OnActivate()
 
 	--test system entity database connection
 	Debug.Log("System DB Connection")
-	sqliteSysdb = SQLiteLY.GetSysConnection()
+	sqliteSysdb = SQLite3.GetSysConnection()
 
 	Debug.Log("Type: " .. type(sqliteSysdb))
 

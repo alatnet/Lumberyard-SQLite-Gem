@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SQLite\SQLiteValue.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	void SQLiteValue::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		////////////////////////////////////////////////////////////////////////
 		// Value Class

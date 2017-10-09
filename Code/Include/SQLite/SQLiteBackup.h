@@ -4,7 +4,7 @@
 #include <AzCore/RTTI/BehaviorContext.h>
 #include "SQLiteDB.h"
 
-namespace SQLite3 {
+namespace SQLite {
 	class SQLiteBackup;
 
 	class SQLiteBackupRequests : public AZ::EBusTraits {
