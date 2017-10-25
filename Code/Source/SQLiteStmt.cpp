@@ -14,6 +14,7 @@ namespace SQLite {
 		#define SQLITESTMT_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteStmt::##name##,##defaultval##,##dbgDesc##)
 		#define SQLITESTMT_METHOD_ALT(name, func, defaultval, dbgDesc) ->Method(##name##,&SQLiteStmt::##func##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteStmt>("SQLiteStmt")
+			->Attribute(AZ::Script::Attributes::Category, "SQLite")
 			//------------------
 			SQLITESTMT_METHOD(Step, nullptr, "")
 			SQLITESTMT_METHOD(Finalize, nullptr, "")

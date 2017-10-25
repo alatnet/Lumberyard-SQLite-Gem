@@ -7,6 +7,7 @@ namespace SQLite {
 		// Value Class
 		#define SQLITEVALUE_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteValue::##name##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteValue>("SQLiteValue")
+			->Attribute(AZ::Script::Attributes::Category, "SQLite")
 			//SQLITEVALUE_METHOD(Blob, nullptr, "")
 			SQLITEVALUE_METHOD(Bytes, nullptr, "")
 			SQLITEVALUE_METHOD(Bytes16, nullptr, "")

@@ -20,7 +20,6 @@ namespace SQLite
         {
             // Push results of [MyComponent]::CreateDescriptor() into m_descriptors here.
             m_descriptors.insert(m_descriptors.end(), {
-				//SQLite::SQLiteComponent::CreateDescriptor(),
 				SQLiteSystemComponent::CreateDescriptor(),
             });
         }

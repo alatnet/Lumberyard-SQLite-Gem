@@ -7,6 +7,7 @@ namespace SQLite {
 		// Backup Class
 		#define SQLITEBAK_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteBackup::##name##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteBackup>("SQLiteBackup")
+			->Attribute(AZ::Script::Attributes::Category, "SQLite")
 			->Constructor<SQLiteDB *, const char *, SQLiteDB *, const char *>()
 			SQLITEBAK_METHOD(Step, nullptr, "")
 			SQLITEBAK_METHOD(Finish, nullptr, "")

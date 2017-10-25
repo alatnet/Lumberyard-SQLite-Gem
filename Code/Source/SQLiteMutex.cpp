@@ -5,6 +5,7 @@ namespace SQLite {
 	void SQLiteMutex::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 	#define SQLITEMUTEX_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteMutex::##name##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteMutex>("SQLiteMutex")
+			->Attribute(AZ::Script::Attributes::Category, "SQLite")
 			SQLITEMUTEX_METHOD(Enter, nullptr, "")
 			SQLITEMUTEX_METHOD(Try, nullptr, "")
 			SQLITEMUTEX_METHOD(Leave, nullptr, "")

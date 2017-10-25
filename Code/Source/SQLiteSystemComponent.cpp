@@ -47,6 +47,7 @@ namespace SQLite {
 			#define SQLITE_EVENT(name) ->Event(#name, &SQLiteRequestBus::Events::##name##)
 			#define SQLITE_EVENTLUA(name) ->Event(#name, &SQLiteRequestBus::Events::##name##Lua)
 			behaviorContext->EBus<SQLiteRequestBus>("SQLiteBus")
+				->Attribute(AZ::Script::Attributes::Category, "SQLite")
 				->Handler<LuaHandler>()
 				SQLITE_EVENTLUA(Exec)
 				SQLITE_EVENTLUA(ExecTo)
@@ -54,6 +55,7 @@ namespace SQLite {
 				//SQLITE_EVENTLUA(GetSysConnection)
 				;
 			behaviorContext->Class<SQLiteSystemComponent>("SQLite3")
+				->Attribute(AZ::Script::Attributes::Category, "SQLite")
 				->Method("GetSysConnection", &SQLiteSystemComponent::GetSysConnectionLua, nullptr, "")
 				->Constant("TEXT", []() -> int { return SQLITE3_TEXT; });
 			#undef SQLITE_EVENTLUA
@@ -77,12 +79,11 @@ namespace SQLite {
 	}
 
 	void SQLiteSystemComponent::GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required) {
-		(void)required;// .push_back(AZ_CRC("SQLite3Service"));
+		(void)required;
 	}
 
 	void SQLiteSystemComponent::GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent) {
 		(void)dependent;
-		//dependent.push_back(AZ_CRC("SQLite3Service"));
 	}
 
 	void SQLiteSystemComponent::Init() {
@@ -91,7 +92,7 @@ namespace SQLite {
 	}
 
 	void SQLiteSystemComponent::Activate() {
-		AZ_Printf("SQLiteLY", "[SQLiteLY] %s - Opening Database: %s\n", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
+		AZ_Printf("SQLite", "[SQLite] %s - Opening Database: %s\n", this->GetEntityId().ToString().c_str(), this->m_dbPath.c_str());
 
 		switch (this->m_OpenType) {
 		case OPEN:
@@ -109,8 +110,8 @@ namespace SQLite {
 
 	void SQLiteSystemComponent::Deactivate() {
 		SQLiteRequestBus::Handler::BusDisconnect();
-		AZ_Printf("SQLiteLY", "[SQLiteLY] %s - Closing Database.\n", this->GetEntityId().ToString().c_str());
-		//this->m_pDB->m_entityid.SetInvalid();
+		AZ_Printf("SQLite", "[SQLite] %s - Closing Database.\n", this->GetEntityId().ToString().c_str());
+		this->m_pDB->m_entityid.SetInvalid();
 		this->m_pDB->Close();
 		delete this->m_pDB;
 	}
@@ -142,7 +143,7 @@ namespace SQLite {
 
 			//////////////////////////
 			for (int i = 0; i < argc; i++) {
-				AZ_Printf("SQLiteLY", "%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
+				AZ_Printf("SQLite", "%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
 			}
 
 			AZStd::vector<AZStd::string> argvVec(argv, argc + argv);

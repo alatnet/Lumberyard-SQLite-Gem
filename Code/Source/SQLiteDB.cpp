@@ -19,6 +19,7 @@ namespace SQLite {
 		#define SQLITE_CONSTANT(name) ->Constant(#name, []() -> int { return SQLITE_##name##; })
 		#define SQLITE_CONSTANT_TYPE(name, type) ->Constant(#name, []() -> type { return SQLITE_##name##; })
 		bc->Class<SQLiteDB>("SQLite")
+			->Attribute(AZ::Script::Attributes::Category, "SQLite")
 			->Constructor<>()
 			->Constructor<SQLiteDB*>()
 
@@ -601,6 +602,7 @@ namespace SQLite {
 		if (this->m_entityid.IsValid()) return SQLITE_MISUSE;		
 		int ret = this->Close2Open();
 		this->m_OpenType = CLOSED;
+		this->m_pDB = nullptr;
 		return ret;
 	}
 

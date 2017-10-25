@@ -5,6 +5,7 @@ namespace SQLite {
 	void SQLiteVFS::RegisterBehaviorContext(AZ::BehaviorContext* bc) {
 		#define SQLITEVFS_METHOD(name, defaultval, dbgDesc) ->Method(#name,&SQLiteVFS::##name##,##defaultval##,##dbgDesc##)
 		bc->Class<SQLiteVFS>("SQLite3VFS")
+			->Attribute(AZ::Script::Attributes::Category, "SQLite")
 			->Constructor<const char*>()
 
 			SQLITEVFS_METHOD(Find, nullptr, "")
